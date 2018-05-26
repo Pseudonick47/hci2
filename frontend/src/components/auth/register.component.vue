@@ -10,32 +10,46 @@
         <v-toolbar
           dark
           color="primary">
-          <v-toolbar-title>Login</v-toolbar-title>
+          <v-toolbar-title>Register</v-toolbar-title>
         </v-toolbar>
+
         <v-card-text>
-          <v-form>
+          <v-form 
+            @keyup.enter="submit"
+          >
             <v-text-field
               v-model="username"
               prepend-icon="person"
               name="username"
               label="Username"
               type="text"
-              data-vv-name="username"/>
+              data-vv-name="username"
+              required/>
             <v-text-field
-              id="password"
               v-model="password"
               prepend-icon="lock"
               name="password"
               label="Password"
               type="password"
-              data-vv-name="password"/>
+              data-vv-name="password"
+              required/>
+            <p
+              v-for="(error, index) in registerErrors"
+              :key="index"
+              class="register-errors"
+            >
+              {{ error }}
+            </p>
           </v-form>
         </v-card-text>
         <v-card-actions>
           <v-spacer/>
           <v-btn
             color="primary"
-            @click="submit">Login</v-btn>
+            @click="submit"
+          >
+            Register
+          </v-btn>
         </v-card-actions>
       </v-card>
     </v-flex>
@@ -46,16 +60,18 @@
 import AuthController from 'Controllers/auth.controller';
 
 export default {
-  name: 'Login',
+  name: 'Register',
   data() {
     return {
       username: '',
       password: '',
+      registerErrors: [],
     };
   },
   methods: {
-    submit() {
-      AuthController.login({
+    submit(event) {
+      event.preventDefault();
+      AuthController.register({
         username: this.username,
         password: this.password,
       });
@@ -63,3 +79,9 @@ export default {
   },
 };
 </script>
+
+<style>
+.register-errors {
+  color: red;
+}
+</style>
