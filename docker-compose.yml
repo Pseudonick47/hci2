@@ -5,8 +5,9 @@ services:
     image: mongo
     restart: always
     environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: password
+      MONGODB_USER: root
+      MONGODB_DATABASE: hci
+      MONGODB_PASS: password
 
   web:
     build: .
@@ -14,9 +15,8 @@ services:
       - 1337:1337
     volumes:
       - ./:/app
-    # command: npm start
     environment:
       - NODE_ENV=dev
 
-volumes:
-  mysql:
+    links:
+      - db
