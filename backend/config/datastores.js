@@ -48,6 +48,8 @@ module.exports.datastores = {
     *    (See https://sailsjs.com/config/datastores for help.)                 *
     *                                                                          *
     ***************************************************************************/
+    adapter: 'sails-mongo',
+    url: 'mongodb://db:27017/tahi',
     // adapter: 'sails-mysql',
     // url: 'mysql://user:password@host:port/database',
 
