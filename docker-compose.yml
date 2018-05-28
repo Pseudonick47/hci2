@@ -1,0 +1,22 @@
+version: '3'
+
+services:
+  db:
+    image: mongo
+    restart: always
+    environment:
+      MONGODB_USER: root
+      MONGODB_DATABASE: hci
+      MONGODB_PASS: password
+
+  web:
+    build: .
+    ports:
+      - 1337:1337
+    volumes:
+      - ./:/app
+    environment:
+      - NODE_ENV=dev
+
+    links:
+      - db
