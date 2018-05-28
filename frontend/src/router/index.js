@@ -1,6 +1,5 @@
 import Vue from 'vue';
 import Router from 'vue-router';
-import store from 'Store';
 import { routes } from './routes';
 
 Vue.use(Router);
@@ -16,21 +15,20 @@ router.isCurrentRoute = (routeName) => {
   return router.currentRoute.name === routeName;
 };
 
-router.beforeEach((to, from, next) => {
+// router.beforeEach((to, from, next) => {
   // logged in but shouldn't be
-  if (to.meta.guest && store.getters.isLogged) {
-    return next({ name: '/home' });
-  }
-  // not logged in but should be
-  if (!to.meta.guest && !store.getters.isLogged) {
-    return next({ name: 'login' });
-  }
-  // not admin but should be
-  if (to.meta.admin && !store.getters.isAdmin) {
-    return next({ name: 'home' });
-  }
-
-  return next();
-});
+  // if (to.meta.guest && store.getters.isLogged) {
+  //   return next({ name: '/home' });
+  // }
+  // // not logged in but should be
+  // if (!to.meta.guest && !store.getters.isLogged) {
+  //   return next({ name: 'login' });
+  // }
+  // // not admin but should be
+  // if (to.meta.admin && !store.getters.isAdmin) {
+  //   return next({ name: 'home' });
+  // }
+//   return next();
+// });
 
 export default router;

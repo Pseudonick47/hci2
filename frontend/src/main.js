@@ -8,7 +8,6 @@ import 'vuetify/dist/vuetify.min.css';
 import Config from './config';
 import VeeValidate from 'vee-validate';
 
-
 import AuthController from 'Controllers/auth.controller';
 
 Vue.config.productionTip = false;

@@ -1,7 +1,4 @@
-
-import Login from 'Components/auth/login.component';
-import Register from 'Components/auth/register.component';
-import Home from 'Components/home.component';
+import Schedule from 'Components/schedule.component';
 import Welcome from 'Components/welcome.component';
 
 export const routes = [
@@ -14,27 +11,11 @@ export const routes = [
     },
   },
   {
-    path: '/login',
-    name: 'login',
-    component: Login,
+    path: '/schedule',
+    name: 'schedule',
+    component: Schedule,
     meta: {
       guest: true,
-    },
-  },
-  {
-    path: '/register',
-    name: 'register',
-    component: Register,
-    meta: {
-      guest: true,
-    },
-  },
-  {
-    path: '/home',
-    name: 'home',
-    component: Home,
-    meta: {
-      logged: true,
     },
   },
 ];
