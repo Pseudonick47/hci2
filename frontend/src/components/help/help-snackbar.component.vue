@@ -3,9 +3,8 @@
     class="help"
   >
     <span class="help-text">
-      <v-icon>help</v-icon>
+      <help-dialog></help-dialog>
     </span>
-    <help-dialog></help-dialog>
   </div>
 </template>
 <script>
@@ -48,5 +47,8 @@ export default {
   position: relative;
   right: -10px;
   bottom: -10px;
+}
+.help-text:hover {
+  cursor: pointer;
 }
 </style>
