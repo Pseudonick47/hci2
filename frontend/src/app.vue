@@ -19,10 +19,12 @@
       </v-container>
     </v-content>
     <v-footer app/>
+    <help/>
   </v-app>
 </template>
 
 <script>
+import Help from 'Components/help/help-snackbar.component';
 import AuthController from 'Controllers/auth.controller';
 import { mapGetters } from 'vuex';
 
@@ -31,6 +33,9 @@ export default {
   data() {
     return {
     };
+  },
+  components: {
+    Help,
   },
   computed: {
     ...mapGetters([
