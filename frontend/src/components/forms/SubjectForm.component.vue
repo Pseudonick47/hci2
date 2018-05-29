@@ -148,46 +148,47 @@
 import CourseForm from 'Components/forms/CourseForm.component';
 import SoftwareForm from 'Components/forms/SoftwareForm.component';
 import { Subject } from 'Models/subject.model';
-  export default {
-    name: 'SubjectForm',
-    components: { CourseForm, SoftwareForm },
-    data: () => ({
-      subject: new Subject(),
-      sofwareList: [
-        'Item 1',
-        'Item 2',
-        'Item 3',
-        'Item 4',
-      ],
-      courseList: [
-        'prvi',
-        'drugi',
-        'treci',
-      ],
-      entity: '',
-      dialog: false,
-    }),
 
-    methods: {
-      submit () {
-        this.$validator.validateAll();
-      },
-      clear () {
-        this.subject = new Subject();
-        this.$validator.reset();
-      },
-      newSoftware() {
-        this.entity = 'software';
-        this.dialog = true;
-      },
-      newCourse() {
-        this.entity = 'course';
-        this.dialog = true;
-      },
-      close() {
-        this.dialog = false;
-        this.type = '';
-      },
+export default {
+  name: 'SubjectForm',
+  components: { CourseForm, SoftwareForm },
+  data: () => ({
+    subject: new Subject(),
+    sofwareList: [
+      'Item 1',
+      'Item 2',
+      'Item 3',
+      'Item 4',
+    ],
+    courseList: [
+      'prvi',
+      'drugi',
+      'treci',
+    ],
+    entity: '',
+    dialog: false,
+  }),
+
+  methods: {
+    submit () {
+      this.$validator.validateAll();
     },
-  };
+    clear () {
+      this.subject = new Subject();
+      this.$validator.reset();
+    },
+    newSoftware() {
+      this.entity = 'software';
+      this.dialog = true;
+    },
+    newCourse() {
+      this.entity = 'course';
+      this.dialog = true;
+    },
+    close() {
+      this.dialog = false;
+      this.type = '';
+    },
+  },
+};
 </script>
