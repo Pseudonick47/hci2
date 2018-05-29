@@ -7,7 +7,9 @@
         flat
         @click="goToSchedule"
       >Schedule</v-btn>
-      <v-btn flat>Entities</v-btn>
+      <v-btn
+        flat
+        @click="goToEntities">Entities</v-btn>
     </v-toolbar>
     <v-content>
       <v-container
@@ -46,6 +48,9 @@ export default {
     },
     goToSchedule() {
       this.$router.push({ name: 'schedule' });
+    },
+    goToEntities() {
+      this.$router.push({ name: 'entities' });
     },
   },
 };
