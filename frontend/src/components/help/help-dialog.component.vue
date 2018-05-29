@@ -55,10 +55,14 @@
   </v-layout>
 </template>
 <script>
+import Vue from 'vue';
 import { TEXTS } from './../../constants';
 export default {
   name: 'HelpDialog',
   computed: {
+    currentRouteName() {
+      return Vue.prototype.router.currentRoute.name;
+    },
     selectedText() {
       return TEXTS[this.selectedSubitem] || 'Comming soon';
     },
@@ -70,7 +74,7 @@ export default {
           {
             action: 'local_activity',
             title: 'Entities',
-            active: true,
+            route: 'entities',
             items: [
               { title: 'Prvi', value: 'entities1' },
               { title: 'Drugi', value: 'entities2' },
@@ -81,6 +85,7 @@ export default {
           },
           {
             action: 'calendar_today',
+            route: 'schedule',
             title: 'Schedule',
             items: [
               { title: 'Subject Selection', value: 'schedule1' },
@@ -89,9 +94,15 @@ export default {
           },
         ],
   }),
+  created() {
+    const activeItem = _.find(this.items, [
+      'route',
+      this.currentRouteName,
+    ]);
+    activeItem['active'] = true;
+  },
   methods: {
     subitemSelected(subItem, item) {
-      console.log(subItem, item);
       this.selectedSubitem = subItem.value;
       item['active'] = true;
     },

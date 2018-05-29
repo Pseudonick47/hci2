@@ -8,18 +8,12 @@
   </div>
 </template>
 <script>
-import Vue from 'vue';
 import HelpDialog from 'Components/help/help-dialog.component';
 
 export default {
   name: 'Help',
   components: {
     HelpDialog,
-  },
-  computed: {
-    currentRouteName() {
-      return Vue.prototype.router.currentRoute.name;
-    },
   },
 };
 </script>

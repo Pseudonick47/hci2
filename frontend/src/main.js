@@ -8,14 +8,11 @@ import 'vuetify/dist/vuetify.min.css';
 import Config from './config';
 import VeeValidate from 'vee-validate';
 
-import AuthController from 'Controllers/auth.controller';
-
 Vue.config.productionTip = false;
 
 Vue.use(Vuetify);
 Vue.prototype.router = router;
 
-AuthController.initStoreAuth();
 Vue.use(VeeValidate);
 
 Axios.defaults.baseURL = Config.getApiUrl();
