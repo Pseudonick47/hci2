@@ -1,3 +1,5 @@
+import { TEXTS } from './help';
+
 const ENVIRONMENTS = {
   'localhost': 'dev',
   'project.local  ': 'dev',
@@ -12,4 +14,5 @@ const BACKEND_HOSTNAMES = {
 export {
   ENVIRONMENTS,
   BACKEND_HOSTNAMES,
+  TEXTS,
 };
