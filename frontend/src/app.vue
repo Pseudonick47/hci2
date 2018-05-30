@@ -1,5 +1,6 @@
 <template>
   <v-app>
+    <alert-box v-if="showAlert"/>
     <v-toolbar app>
       <v-toolbar-title>CS Laboratories</v-toolbar-title>
       <v-spacer/>
@@ -7,7 +8,9 @@
         flat
         @click="goToSchedule"
       >Schedule</v-btn>
-      <v-btn flat>Entities</v-btn>
+      <v-btn
+        flat
+        @click="goToEntities">Entities</v-btn>
     </v-toolbar>
     <v-content>
       <v-container
@@ -26,6 +29,7 @@
 <script>
 import Help from 'Components/help/help-snackbar.component';
 import AuthController from 'Controllers/auth.controller';
+import AlertBox from 'Components/helpers/AlertHelper.component';
 import { mapGetters } from 'vuex';
 
 export default {
@@ -35,6 +39,7 @@ export default {
     };
   },
   components: {
+    'alert-box': AlertBox,
     Help,
   },
   computed: {
@@ -43,6 +48,7 @@ export default {
       'isAdmin',
       'isLogged',
       'activeUserRole',
+      'showAlert',
     ]),
   },
   methods: {
@@ -51,6 +57,9 @@ export default {
     },
     goToSchedule() {
       this.$router.push({ name: 'schedule' });
+    },
+    goToEntities() {
+      this.$router.push({ name: 'entities' });
     },
   },
 };

@@ -1,11 +1,14 @@
 import * as _ from 'lodash';
 
-export class Course {
+export class Software {
   constructor(data) {
     this.label = '';
-    this.title = '';
     this.description = '';
-    this.date = null;
+    this.manufacturer = '';
+    this.site = '';
+    this.price = null;
+    this.year = null;
+    this.os = [];
     _.assignWith(this, data);
   }
 }

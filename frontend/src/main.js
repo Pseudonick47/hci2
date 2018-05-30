@@ -7,17 +7,19 @@ import Axios from 'axios';
 import 'vuetify/dist/vuetify.min.css';
 import Config from './config';
 import VeeValidate from 'vee-validate';
+import AlertHelper from './helpers/alert-helper';
 
 Vue.config.productionTip = false;
 
 Vue.use(Vuetify);
 Vue.prototype.router = router;
+Vue.prototype.$alert = AlertHelper;
 
 Vue.use(VeeValidate);
 
 Axios.defaults.baseURL = Config.getApiUrl();
 Axios.defaults.headers.Accept = 'application/json';
-Axios.defaults.headers['Access-Control-Allow-Origin'] = '*';
+// Axios.defaults.headers['Access-Control-Allow-Origin'] = '*';
 
 /* eslint-disable no-new */
 new Vue({

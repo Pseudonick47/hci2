@@ -1,0 +1,5 @@
+{
+  "eslint.run":"onType",
+  "eslint.autoFixOnSave":true,
+  "python.envFile": "/home/simona/.local/share/virtualenvs/backend-q_LXweyd/bin/activate",
+}
