@@ -14,9 +14,9 @@
     </v-toolbar>
     <v-content>
       <v-container
-        fluid
-        pa-0
-        fill-height
+        px-0
+        pt-1
+        style="min-height: 100%;"
       >
         <router-view/>
       </v-container>

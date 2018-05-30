@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="entities-wrapper">
     <v-tabs
       slot="extension"
       v-model="tab"
@@ -15,16 +15,23 @@
     </v-tabs>
     <v-tabs-items v-model="tab">
       <v-tab-item v-for="item in tabs" :key="item">
-        <v-layout row>
-          <v-flex sm4>
-            <classroom-form v-if="item=='classroom'"></classroom-form>
-            <subject-form v-if="item=='subject'"></subject-form>
-            <software-form v-if="item=='software'"></software-form>
-            <course-form v-if="item=='course'"></course-form>
+        <v-layout row class="pt-5 mb-2">
+          <v-flex
+            sm5
+            md5
+            class="mx-2"
+          >
+            <v-card class="pa-2">
+              <classroom-form v-if="item=='classroom'"></classroom-form>
+              <subject-form v-if="item=='subject'"></subject-form>
+              <software-form v-if="item=='software'"></software-form>
+              <course-form v-if="item=='course'"></course-form>
+            </v-card>
           </v-flex>
           <v-flex
             sm7
-            offset-sm1
+            md7
+            class="mx-2"
           >
             <v-card flat>
               <Table
@@ -58,6 +65,7 @@ import { Software } from 'Models/software.model';
 import { Classroom } from 'Models/classroom.model';
 
 export default {
+  name: 'Entities',
   components: { Table, ClassroomForm, SubjectForm, SoftwareForm, CourseForm },
   data () {
     return {
@@ -100,3 +108,8 @@ export default {
   },
 };
 </script>
+<style>
+.entities-wrapper {
+  flex: 1;
+}
+</style>
