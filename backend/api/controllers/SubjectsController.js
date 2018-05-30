@@ -13,8 +13,8 @@ module.exports = {
   },
 
   async get(req, res) {
-    let Subjects = await Subjects.find();
-    return res.json(Subjects);
+    let subjects = await Subjects.find();
+    return res.json(subjects);
   }
 
 };

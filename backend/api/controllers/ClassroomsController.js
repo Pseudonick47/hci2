@@ -13,8 +13,8 @@ module.exports = {
   },
 
   async get(req, res) {
-    let Classrooms = await Classrooms.find();
-    return res.json(Classrooms);
+    let classrooms = await Classrooms.find();
+    return res.json(classrooms);
   }
 
 };
