@@ -95,6 +95,8 @@
 
 <script>
 import { Software } from 'Models/software.model';
+import SoftwareController from 'Controllers/software.controller';
+
   export default {
     name: 'ClassroomForm',
     data: () => ({
@@ -103,7 +105,18 @@ import { Software } from 'Models/software.model';
 
     methods: {
       submit () {
-        this.$validator.validateAll();
+        this.$validator.validateAll().then((result) => {
+        if (result) {
+          SoftwareController.create(this.software).then(() => {
+            this.$alert.success('Successfully added! ');
+          }).
+          catch(() => {
+            this.$alert.error('Error occurred.');
+          });
+        } else {
+          this.$alert.warning('Please fill out the form.');
+        }
+      });
       },
       clear () {
         this.software = new Software();

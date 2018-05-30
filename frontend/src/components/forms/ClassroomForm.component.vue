@@ -100,38 +100,50 @@
 <script>
 import SoftwareForm from 'Components/forms/SoftwareForm.component';
 import { Classroom } from 'Models/classroom.model';
+import ClassroomsController from 'Controllers/classrooms.controller';
 
-  export default {
-    name: 'ClassroomForm',
-    components: { SoftwareForm },
-    data: () => ({
-      classroom: new Classroom(),
-      sofwareList: [
-        'Item 1',
-        'Item 2',
-        'Item 3',
-        'Item 4',
-      ],
-      dialog: false,
-    }),
+export default {
+  name: 'ClassroomForm',
+  components: { SoftwareForm },
+  data: () => ({
+    classroom: new Classroom(),
+    sofwareList: [
+      'Item 1',
+      'Item 2',
+      'Item 3',
+      'Item 4',
+    ],
+    dialog: false,
+  }),
 
-    methods: {
-      submit () {
-        this.$validator.validateAll();
-      },
-      clear () {
-        this.classroom = new Classroom();
-        this.$validator.reset();
-      },
-      newSoftware() {
-        this.dialog = true;
-      },
-      close() {
-        this.dialog = false;
-      },
-      save() {
-        console.log('save');
-      },
+  methods: {
+    submit () {
+      this.$validator.validateAll().then((result) => {
+      if (result) {
+        ClassroomsController.create(this.classroom).then(() => {
+            this.$alert.success('Successfully added! ');
+          }).
+          catch(() => {
+            this.$alert.error('Error occurred.');
+          });
+      } else {
+          this.$alert.warning('Please fill out the form.');
+      }
+    });
     },
-  };
+    clear () {
+      this.classroom = new Classroom();
+      this.$validator.reset();
+    },
+    newSoftware() {
+      this.dialog = true;
+    },
+    close() {
+      this.dialog = false;
+    },
+    save() {
+      console.log('save');
+    },
+  },
+};
 </script>

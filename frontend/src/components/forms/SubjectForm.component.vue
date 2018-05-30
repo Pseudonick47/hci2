@@ -148,6 +148,7 @@
 import CourseForm from 'Components/forms/CourseForm.component';
 import SoftwareForm from 'Components/forms/SoftwareForm.component';
 import { Subject } from 'Models/subject.model';
+import SubjectsController from 'Controllers/subjects.controller';
 
 export default {
   name: 'SubjectForm',
@@ -171,7 +172,18 @@ export default {
 
   methods: {
     submit () {
-      this.$validator.validateAll();
+      this.$validator.validateAll().then((result) => {
+        if (result) {
+          SubjectsController.create(this.subject).then(() => {
+            this.$alert.success('Successfully added! ');
+          }).
+          catch(() => {
+            this.$alert.error('Error occurred.');
+          });
+        } else {
+          this.$alert.warning('Please fill out the form.');
+        }
+      });
     },
     clear () {
       this.subject = new Subject();

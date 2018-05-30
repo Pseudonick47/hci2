@@ -6,7 +6,11 @@
  */
 
 module.exports = {
-  
+  async create(req, res) {
+    let requestBody = req.body;
+    let subject = await Subjects.create(requestBody).fetch();
+    return res.json(subject);
+  }
 
 };
 

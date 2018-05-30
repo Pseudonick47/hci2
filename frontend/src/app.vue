@@ -1,5 +1,6 @@
 <template>
   <v-app>
+    <alert-box v-if="showAlert"/>
     <v-toolbar app>
       <v-toolbar-title>CS Laboratories</v-toolbar-title>
       <v-spacer/>
@@ -26,6 +27,7 @@
 
 <script>
 import AuthController from 'Controllers/auth.controller';
+import AlertBox from 'Components/helpers/AlertHelper.component';
 import { mapGetters } from 'vuex';
 
 export default {
@@ -34,12 +36,16 @@ export default {
     return {
     };
   },
+  components: {
+    'alert-box': AlertBox,
+  },
   computed: {
     ...mapGetters([
       'activeUser',
       'isAdmin',
       'isLogged',
       'activeUserRole',
+      'showAlert',
     ]),
   },
   methods: {

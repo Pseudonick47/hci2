@@ -9,10 +9,7 @@ const BACKEND_HOSTNAMES = {
   'stage': 'http://stagebackend.com',
 };
 
-const API_ROUTE = '/api';
-
 export {
   ENVIRONMENTS,
   BACKEND_HOSTNAMES,
-  API_ROUTE,
 };

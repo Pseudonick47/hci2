@@ -1,4 +1,4 @@
-import { ENVIRONMENTS, BACKEND_HOSTNAMES, API_ROUTE } from '@/constants';
+import { ENVIRONMENTS, BACKEND_HOSTNAMES } from '@/constants';
 
 export default {
   getEnv() {
@@ -10,7 +10,6 @@ export default {
   },
 
   getApiUrl() {
-    // return this.getHostName() + API_ROUTE;
     return this.getHostName();
   },
 };

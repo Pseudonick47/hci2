@@ -79,14 +79,14 @@ export default {
     submit () {
       this.$validator.validateAll().then((result) => {
         if (result) {
-          CoursesController.create(this.course).
-            then((response) => {
-              console.log('ok', response);
-            }).catch(() => {
-              console.log('not ok');
-            });
+          CoursesController.create(this.course).then(() => {
+            this.$alert.success('Successfully added! ');
+          }).
+          catch(() => {
+            this.$alert.error('Error occurred.');
+          });
         } else {
-          console.log('error');
+          this.$alert.warning('Please fill out the form.');
         }
       });
     },

@@ -5,6 +5,7 @@ import {
   auth,
   courses,
   entity,
+  alert,
 } from './modules';
 
 Vue.use(Vuex);
@@ -14,6 +15,7 @@ const storeData = {
     auth,
     courses,
     entity,
+    alert,
   },
 };
 
