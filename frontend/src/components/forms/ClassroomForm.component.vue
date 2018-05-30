@@ -9,7 +9,11 @@
         </v-card-actions>
     </v-card>
   </v-dialog>
-  <form>
+  <form
+    v-shortcuts="[
+      { shortcut: [ 'ctrl', 'enter' ], callback: () => submit(), disabled: isDisabled },
+    ]"
+  >
     <v-text-field
       v-validate="'required'"
       v-model="classroom.label"
@@ -108,10 +112,16 @@ export default {
   name: 'ClassroomForm',
   components: { SoftwareForm },
   computed: {
+    isDisabled() {
+      return this.currentForm !== 'classroom';
+    },
     softwareList() {
       return _.map(this.softwares, (x) => x.title);
     },
-    ...mapGetters(['softwares']),
+    ...mapGetters([
+      'softwares',
+      'currentForm',
+    ]),
   },
   data: () => ({
     classroom: new Classroom(),

@@ -8,12 +8,14 @@ import 'vuetify/dist/vuetify.min.css';
 import Config from './config';
 import VeeValidate from 'vee-validate';
 import AlertHelper from './helpers/alert-helper';
+import VueShortcuts from 'vue-shortcuts';
 
 // eslint-disable-next-line
 import * as _ from 'lodash';
 Vue.config.productionTip = false;
 
 Vue.use(Vuetify);
+Vue.use(VueShortcuts);
 Vue.prototype.router = router;
 Vue.prototype.$alert = AlertHelper;
 

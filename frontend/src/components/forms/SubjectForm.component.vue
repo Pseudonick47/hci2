@@ -10,7 +10,11 @@
         </v-card-actions>
     </v-card>
   </v-dialog>
-  <form>
+  <form
+    v-shortcuts="[
+      { shortcut: [ 'ctrl', 'enter' ], callback: () => submit(), disabled: isDisabled },
+    ]"
+  >
     <v-layout row>
     <v-text-field
       v-validate="'required'"
@@ -159,7 +163,11 @@ export default {
     ...mapGetters([
       'softwares',
       'courses',
+      'currentForm',
     ]),
+    isDisabled() {
+      return this.currentForm !== 'subject';
+    },
     softwareList() {
       return _.map(this.softwares, (x) => x.title);
     },

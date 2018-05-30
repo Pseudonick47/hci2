@@ -1,5 +1,13 @@
 <template>
-  <div class="entities-wrapper">
+  <div
+    class="entities-wrapper"
+    v-shortcuts="[
+      { shortcut: [ 'ctrl', '1' ], callback: () => setTab('0') },
+      { shortcut: [ 'ctrl', '2' ], callback: () => setTab('1') },
+      { shortcut: [ 'ctrl', '3' ], callback: () => setTab('2') },
+      { shortcut: [ 'ctrl', '4' ], callback: () => setTab('3') },
+    ]"
+  >
     <v-tabs
       slot="extension"
       v-model="tab"
@@ -49,6 +57,7 @@
 
 <script>
 import { mapGetters } from 'vuex';
+import { TAB_VALUES } from './../constants';
 import Table from 'Components/table.component';
 import ClassroomForm from 'Components/forms/ClassroomForm.component';
 import SubjectForm from 'Components/forms/SubjectForm.component';
@@ -93,22 +102,14 @@ export default {
   mounted() {
     this.getData();
   },
+  watch: {
+    tab(x) {
+      store.commit('setCurrentForm', TAB_VALUES[x]);
+    },
+  },
   methods: {
-    addSoftware(x) {
-      this.softwareFormOpen = false;
-      this.software.push(x);
-    },
-    addClassroom(x) {
-      this.classroomFormOpen = false;
-      this.classroom.push(x);
-    },
-    addSubject(x) {
-      this.subjectFormOpen = false;
-      this.subject.push(x);
-    },
-    addCourse(x) {
-      this.courseFormOpen = false;
-      this.course.push(x);
+    setTab(x) {
+      this.tab = x;
     },
     getData() {
       ClassroomsController.list().then(({ data }) => {

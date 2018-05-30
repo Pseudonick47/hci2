@@ -1,5 +1,9 @@
 <template>
-  <form>
+  <form
+    v-shortcuts="[
+      { shortcut: [ 'ctrl', 'enter' ], callback: () => submit(), disabled: isDisabled },
+    ]"
+  >
     <v-layout row>
     <v-text-field
       v-validate="'required'"
@@ -68,12 +72,18 @@
 import { Course } from 'Models/course.model';
 import CoursesController from 'Controllers/courses.controller';
 import store from 'Store';
+import { mapGetters } from 'vuex';
 
 export default {
   name: 'ClassroomForm',
+  computed: {
+    ...mapGetters(['currentForm']),
+    isDisabled() {
+      return this.currentForm !== 'course';
+    },
+  },
   data: () => ({
     course: new Course(),
-    courses: [],
     dateMenu: false,
   }),
   methods: {

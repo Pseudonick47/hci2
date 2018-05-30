@@ -54,6 +54,7 @@ const state = {
   subjects: {},
   courses: {},
   softwares: {},
+  currentForm: 'classroom',
 };
 
 const getters = {
@@ -63,9 +64,13 @@ const getters = {
   softwares: (state) => _.values(state.softwares),
   courses: (state) => _.values(state.courses),
   subjects: (state) => _.values(state.subjects),
+  currentForm: (state) => state.currentForm,
 };
 
 const mutations = {
+  setCurrentForm(state, form) {
+    state.currentForm = form;
+  },
   addClassroom(state, data) {
     Vue.set(state.classrooms, data.id, new Classroom(data));
   },
