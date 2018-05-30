@@ -117,9 +117,6 @@ export default {
     classroom: new Classroom(),
     dialog: false,
   }),
-  mounted() {
-    this.getSoftwareList();
-  },
   methods: {
     submit () {
       this.$validator.validateAll().then((result) => {

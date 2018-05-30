@@ -172,9 +172,6 @@ export default {
     entity: '',
     dialog: false,
   }),
-  mounted() {
-    this.getSoftwareAndCourseLists();
-  },
   methods: {
     submit () {
       this.$validator.validateAll().then((result) => {
