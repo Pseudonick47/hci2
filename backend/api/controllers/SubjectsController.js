@@ -10,6 +10,11 @@ module.exports = {
     let requestBody = req.body;
     let subject = await Subjects.create(requestBody).fetch();
     return res.json(subject);
+  },
+
+  async get(req, res) {
+    let Subjects = await Subjects.find();
+    return res.json(Subjects);
   }
 
 };

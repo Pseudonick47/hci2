@@ -72,9 +72,9 @@
     </v-layout>
     <v-layout row>
     <v-select
-      :items="sofwareList"
-      v-model="subject.sofware"
-      label="Sofware"
+      :items="softwareList"
+      v-model="subject.software"
+      label="Software"
       multiple
     ></v-select>
     <v-btn
@@ -99,19 +99,19 @@
     <v-layout row>
     <v-checkbox
       v-model="subject.projector"
-      value="1"
+      value="yes"
       label="Projector"
       type="checkbox"
     ></v-checkbox>
     <v-checkbox
       v-model="subject.board"
-      value="1"
+      value="yes"
       label="Board"
       type="checkbox"
     ></v-checkbox>
     <v-checkbox
       v-model="subject.smartBoard"
-      value="1"
+      value="yes"
       label="Smart board"
       type="checkbox"
     ></v-checkbox>
@@ -149,28 +149,31 @@ import CourseForm from 'Components/forms/CourseForm.component';
 import SoftwareForm from 'Components/forms/SoftwareForm.component';
 import { Subject } from 'Models/subject.model';
 import SubjectsController from 'Controllers/subjects.controller';
+import SoftwareController from 'Controllers/software.controller';
+import CoursesController from 'Controllers/courses.controller';
 
 export default {
   name: 'SubjectForm',
   components: { CourseForm, SoftwareForm },
   data: () => ({
     subject: new Subject(),
-    sofwareList: [
-      'Item 1',
-      'Item 2',
-      'Item 3',
-      'Item 4',
-    ],
-    courseList: [
-      'prvi',
-      'drugi',
-      'treci',
-    ],
+    softwareList: [],
+    courseList: [],
     entity: '',
     dialog: false,
   }),
-
+  mounted() {
+    this.getSoftwareAndCourseLists();
+  },
   methods: {
+    getSoftwareAndCourseLists() {
+      SoftwareController.list().then((response) => {
+        this.softwareList = _.map(response.data, (x) => x.title);
+      });
+      CoursesController.list().then((response) => {
+        this.courseList = _.map(response.data, (x) => x.title);
+      });
+    },
     submit () {
       this.$validator.validateAll().then((result) => {
         if (result) {

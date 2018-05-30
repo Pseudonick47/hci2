@@ -4,4 +4,7 @@ export default {
   create(data) {
     return SoftwareApiService.create(data);
   },
+  list() {
+    return SoftwareApiService.list();
+  },
 };

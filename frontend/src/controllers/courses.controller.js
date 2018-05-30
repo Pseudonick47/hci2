@@ -4,4 +4,7 @@ export default {
   create(data) {
     return CoursesApiService.create(data);
   },
+  list() {
+    return CoursesApiService.list();
+  },
 };

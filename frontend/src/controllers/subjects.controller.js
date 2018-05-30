@@ -4,4 +4,7 @@ export default {
   create(data) {
     return SubjectsApiService.create(data);
   },
+  list() {
+    return SubjectsApiService.list();
+  },
 };

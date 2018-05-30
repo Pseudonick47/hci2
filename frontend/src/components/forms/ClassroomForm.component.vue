@@ -38,9 +38,9 @@
     ></v-text-field>
     <v-layout row>
     <v-select
-      :items="sofwareList"
-      v-model="classroom.sofware"
-      label="Sofware"
+      :items="softwareList"
+      v-model="classroom.software"
+      label="Software"
       multiple
     ></v-select>
     <v-btn
@@ -52,19 +52,19 @@
     <v-layout row>
     <v-checkbox
       v-model="classroom.projector"
-      value="1"
+      value="yes"
       label="Projector"
       type="checkbox"
     ></v-checkbox>
     <v-checkbox
       v-model="classroom.board"
-      value="1"
+      value="yes"
       label="Board"
       type="checkbox"
     ></v-checkbox>
     <v-checkbox
       v-model="classroom.smartBoard"
-      value="1"
+      value="yes"
       label="Smart board"
       type="checkbox"
     ></v-checkbox>
@@ -101,22 +101,25 @@
 import SoftwareForm from 'Components/forms/SoftwareForm.component';
 import { Classroom } from 'Models/classroom.model';
 import ClassroomsController from 'Controllers/classrooms.controller';
+import SoftwareController from 'Controllers/software.controller';
 
 export default {
   name: 'ClassroomForm',
   components: { SoftwareForm },
   data: () => ({
     classroom: new Classroom(),
-    sofwareList: [
-      'Item 1',
-      'Item 2',
-      'Item 3',
-      'Item 4',
-    ],
+    softwareList: [],
     dialog: false,
   }),
-
+  mounted() {
+    this.getSoftwareList();
+  },
   methods: {
+    getSoftwareList() {
+      SoftwareController.list().then((response) => {
+        this.softwareList = _.map(response.data, (x) => x.title);
+      });
+    },
     submit () {
       this.$validator.validateAll().then((result) => {
       if (result) {

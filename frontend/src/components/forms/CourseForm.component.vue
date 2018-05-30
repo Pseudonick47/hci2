@@ -72,9 +72,9 @@ export default {
   name: 'ClassroomForm',
   data: () => ({
     course: new Course(),
+    courses: [],
     dateMenu: false,
   }),
-
   methods: {
     submit () {
       this.$validator.validateAll().then((result) => {

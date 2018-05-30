@@ -6,11 +6,11 @@ export class Subject {
     this.description = '';
     this.sofware = [];
     this.groupSize = null;
-    this.projector = null;
-    this.board = null;
+    this.projector = 'no';
+    this.board = 'no';
     this.course = null;
     this.title = null;
-    this.smartBoard = null;
+    this.smartBoard = 'no';
     this.os = [];
     this.duration = null;
     this.lessons = null;

@@ -10,6 +10,11 @@ module.exports = {
     let requestBody = req.body;
     let software = await Software.create(requestBody).fetch();
     return res.json(software);
+  },
+
+  async get(req, res) {
+    let software = await Software.find();
+    return res.json(software);
   }
 
 };

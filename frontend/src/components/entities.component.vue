@@ -41,12 +41,21 @@
 </template>
 
 <script>
+import * as _ from 'lodash';
+import { mapGetters } from 'vuex';
 import Table from 'Components/table.component';
 import ClassroomForm from 'Components/forms/ClassroomForm.component';
 import SubjectForm from 'Components/forms/SubjectForm.component';
 import SoftwareForm from 'Components/forms/SoftwareForm.component';
 import CourseForm from 'Components/forms/CourseForm.component';
-import { mapGetters } from 'vuex';
+import CoursesController from 'Controllers/courses.controller';
+import SubjectsController from 'Controllers/subjects.controller';
+import ClassroomsController from 'Controllers/classrooms.controller';
+import SoftwareController from 'Controllers/software.controller';
+import { Course } from 'Models/course.model';
+import { Subject } from 'Models/subject.model';
+import { Software } from 'Models/software.model';
+import { Classroom } from 'Models/classroom.model';
 
 export default {
   components: { Table, ClassroomForm, SubjectForm, SoftwareForm, CourseForm },
@@ -54,22 +63,10 @@ export default {
     return {
       tab: null,
       data: {
-        classroom: [
-          { label: 'jen' },
-          { label: 'dva' },
-        ],
-        subject: [
-          { label: 'tri' },
-          { label: 'cetri' },
-        ],
-        course: [
-          { label: 'pet' },
-          { label: 'ses' },
-        ],
-        software: [
-          { label: 'sedam' },
-          { label: 'osam' },
-        ],
+        classroom: [],
+        subject: [],
+        course: [],
+        software: [],
       },
     };
   },
@@ -79,7 +76,24 @@ export default {
       'tabs',
     ]),
   },
+  mounted() {
+    this.getData();
+  },
   methods: {
+    getData() {
+      ClassroomsController.list().then((response) => {
+        this.data['classroom'] = _.map(response.data, (x) => new Classroom(x));
+      });
+      CoursesController.list().then((response) => {
+        this.data['course'] = _.map(response.data, (x) => new Course(x));
+      });
+      SubjectsController.list().then((response) => {
+        this.data['subject'] = _.map(response.data, (x) => new Subject(x));
+      });
+      SoftwareController.list().then((response) => {
+        this.data['software'] = _.map(response.data, (x) => new Software(x));
+      });
+    },
     getHeaders(entity) {
       return this.headers[entity];
     },

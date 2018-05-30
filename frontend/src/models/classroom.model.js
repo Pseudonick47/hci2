@@ -6,9 +6,9 @@ export class Classroom {
     this.description = '';
     this.capacity = null;
     this.software = [];
-    this.projector = null;
-    this.board = null;
-    this.smartBoard = null;
+    this.projector = 'no';
+    this.board = 'no';
+    this.smartBoard = 'no';
     this.os = [];
     _.assignWith(this, data);
   }

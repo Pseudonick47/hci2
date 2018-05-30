@@ -10,6 +10,11 @@ module.exports = {
     let requestBody = req.body;
     let classroom = await Classrooms.create(requestBody).fetch();
     return res.json(classroom);
+  },
+
+  async get(req, res) {
+    let Classrooms = await Classrooms.find();
+    return res.json(Classrooms);
   }
 
 };
