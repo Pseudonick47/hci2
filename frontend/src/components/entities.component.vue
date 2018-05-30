@@ -113,19 +113,15 @@ export default {
     getData() {
       ClassroomsController.list().then(({ data }) => {
         store.commit('setClassrooms', data);
-        // this.data.classroom = _.map(response.data, (x) => new Classroom(x));
       });
       CoursesController.list().then(({ data }) => {
         store.commit('setCourses', data);
-        // this.data.course = _.map(response.data, (x) => new Course(x));
       });
       SubjectsController.list().then(({ data }) => {
         store.commit('setSubjects', data);
-        // this.data.subject = _.map(response.data, (x) => new Subject(x));
       });
       SoftwareController.list().then(({ data }) => {
         store.commit('setSoftwares', data);
-        // this.data.software = _.map(response.data, (x) => new Software(x));
       });
     },
     getHeaders(entity) {
