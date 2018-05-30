@@ -101,30 +101,32 @@
 import SoftwareForm from 'Components/forms/SoftwareForm.component';
 import { Classroom } from 'Models/classroom.model';
 import ClassroomsController from 'Controllers/classrooms.controller';
-import SoftwareController from 'Controllers/software.controller';
+import store from 'Store';
+import { mapGetters } from 'vuex';
 
 export default {
   name: 'ClassroomForm',
   components: { SoftwareForm },
+  computed: {
+    softwareList() {
+      return _.map(this.softwares, (x) => x.title);
+    },
+    ...mapGetters(['softwares']),
+  },
   data: () => ({
     classroom: new Classroom(),
-    softwareList: [],
     dialog: false,
   }),
   mounted() {
     this.getSoftwareList();
   },
   methods: {
-    getSoftwareList() {
-      SoftwareController.list().then((response) => {
-        this.softwareList = _.map(response.data, (x) => x.title);
-      });
-    },
     submit () {
       this.$validator.validateAll().then((result) => {
       if (result) {
-        ClassroomsController.create(this.classroom).then(() => {
+        ClassroomsController.create(this.classroom).then(({ data }) => {
             this.$alert.success('Successfully added! ');
+            store.commit('addClassroom', data);
           }).
           catch(() => {
             this.$alert.error('Error occurred.');

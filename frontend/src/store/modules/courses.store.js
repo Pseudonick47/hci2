@@ -1,5 +1,3 @@
-import * as _ from 'lodash';
-
 import { Course } from 'Models/course.model';
 
 const namespaced = true;

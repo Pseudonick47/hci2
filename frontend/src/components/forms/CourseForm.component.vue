@@ -67,6 +67,7 @@
 <script>
 import { Course } from 'Models/course.model';
 import CoursesController from 'Controllers/courses.controller';
+import store from 'Store';
 
 export default {
   name: 'ClassroomForm',
@@ -79,7 +80,8 @@ export default {
     submit () {
       this.$validator.validateAll().then((result) => {
         if (result) {
-          CoursesController.create(this.course).then(() => {
+          CoursesController.create(this.course).then(({ data }) => {
+            store.commit('addCourse', data);
             this.$alert.success('Successfully added! ');
           }).
           catch(() => {

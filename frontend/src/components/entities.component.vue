@@ -48,7 +48,6 @@
 </template>
 
 <script>
-import * as _ from 'lodash';
 import { mapGetters } from 'vuex';
 import Table from 'Components/table.component';
 import ClassroomForm from 'Components/forms/ClassroomForm.component';
@@ -59,10 +58,7 @@ import CoursesController from 'Controllers/courses.controller';
 import SubjectsController from 'Controllers/subjects.controller';
 import ClassroomsController from 'Controllers/classrooms.controller';
 import SoftwareController from 'Controllers/software.controller';
-import { Course } from 'Models/course.model';
-import { Subject } from 'Models/subject.model';
-import { Software } from 'Models/software.model';
-import { Classroom } from 'Models/classroom.model';
+import store from 'Store';
 
 export default {
   name: 'Entities',
@@ -70,36 +66,66 @@ export default {
   data () {
     return {
       tab: null,
-      data: {
-        classroom: [],
-        subject: [],
-        course: [],
-        software: [],
-      },
+      softwareFormOpen: false,
+      subjectFormOpen: false,
+      classroomFormOpen: false,
+      courseFormOpen: false,
     };
   },
   computed: {
+    data() {
+      return {
+        software: this.softwares,
+        course: this.courses,
+        subject: this.subjects,
+        classroom: this.classrooms,
+      };
+    },
     ...mapGetters([
       'headers',
       'tabs',
+      'classrooms',
+      'subjects',
+      'courses',
+      'softwares',
     ]),
   },
   mounted() {
     this.getData();
   },
   methods: {
+    addSoftware(x) {
+      this.softwareFormOpen = false;
+      this.software.push(x);
+    },
+    addClassroom(x) {
+      this.classroomFormOpen = false;
+      this.classroom.push(x);
+    },
+    addSubject(x) {
+      this.subjectFormOpen = false;
+      this.subject.push(x);
+    },
+    addCourse(x) {
+      this.courseFormOpen = false;
+      this.course.push(x);
+    },
     getData() {
-      ClassroomsController.list().then((response) => {
-        this.data['classroom'] = _.map(response.data, (x) => new Classroom(x));
+      ClassroomsController.list().then(({ data }) => {
+        store.commit('setClassrooms', data);
+        // this.data.classroom = _.map(response.data, (x) => new Classroom(x));
       });
-      CoursesController.list().then((response) => {
-        this.data['course'] = _.map(response.data, (x) => new Course(x));
+      CoursesController.list().then(({ data }) => {
+        store.commit('setCourses', data);
+        // this.data.course = _.map(response.data, (x) => new Course(x));
       });
-      SubjectsController.list().then((response) => {
-        this.data['subject'] = _.map(response.data, (x) => new Subject(x));
+      SubjectsController.list().then(({ data }) => {
+        store.commit('setSubjects', data);
+        // this.data.subject = _.map(response.data, (x) => new Subject(x));
       });
-      SoftwareController.list().then((response) => {
-        this.data['software'] = _.map(response.data, (x) => new Software(x));
+      SoftwareController.list().then(({ data }) => {
+        store.commit('setSoftwares', data);
+        // this.data.software = _.map(response.data, (x) => new Software(x));
       });
     },
     getHeaders(entity) {

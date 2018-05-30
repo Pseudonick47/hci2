@@ -1,5 +1,3 @@
-import * as _ from 'lodash';
-
 export class Classroom {
   constructor(data) {
     this.label = '';

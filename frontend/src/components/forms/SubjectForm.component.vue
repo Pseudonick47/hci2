@@ -149,16 +149,26 @@ import CourseForm from 'Components/forms/CourseForm.component';
 import SoftwareForm from 'Components/forms/SoftwareForm.component';
 import { Subject } from 'Models/subject.model';
 import SubjectsController from 'Controllers/subjects.controller';
-import SoftwareController from 'Controllers/software.controller';
-import CoursesController from 'Controllers/courses.controller';
+import store from 'Store';
+import { mapGetters } from 'vuex';
 
 export default {
   name: 'SubjectForm',
   components: { CourseForm, SoftwareForm },
+  computed: {
+    ...mapGetters([
+      'softwares',
+      'courses',
+    ]),
+    softwareList() {
+      return _.map(this.softwares, (x) => x.title);
+    },
+    courseList() {
+      return _.map(this.courses, (x) => x.title);
+    },
+  },
   data: () => ({
     subject: new Subject(),
-    softwareList: [],
-    courseList: [],
     entity: '',
     dialog: false,
   }),
@@ -166,19 +176,12 @@ export default {
     this.getSoftwareAndCourseLists();
   },
   methods: {
-    getSoftwareAndCourseLists() {
-      SoftwareController.list().then((response) => {
-        this.softwareList = _.map(response.data, (x) => x.title);
-      });
-      CoursesController.list().then((response) => {
-        this.courseList = _.map(response.data, (x) => x.title);
-      });
-    },
     submit () {
       this.$validator.validateAll().then((result) => {
         if (result) {
-          SubjectsController.create(this.subject).then(() => {
+          SubjectsController.create(this.subject).then(({ data }) => {
             this.$alert.success('Successfully added! ');
+            store.commit('addSubject', data);
           }).
           catch(() => {
             this.$alert.error('Error occurred.');
