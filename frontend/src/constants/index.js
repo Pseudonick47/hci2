@@ -5,7 +5,7 @@ const ENVIRONMENTS = {
 };
 
 const BACKEND_HOSTNAMES = {
-  'dev': 'http://localhost:8000',
+  'dev': 'http://localhost:1337',
   'stage': 'http://stagebackend.com',
 };
 

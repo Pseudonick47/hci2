@@ -66,21 +66,34 @@
 
 <script>
 import { Course } from 'Models/course.model';
-  export default {
-    name: 'ClassroomForm',
-    data: () => ({
-      course: new Course(),
-      dateMenu: false,
-    }),
+import CoursesController from 'Controllers/courses.controller';
 
-    methods: {
-      submit () {
-        this.$validator.validateAll();
-      },
-      clear () {
-        this.course = new Course();
-        this.$validator.reset();
-      },
+export default {
+  name: 'ClassroomForm',
+  data: () => ({
+    course: new Course(),
+    dateMenu: false,
+  }),
+
+  methods: {
+    submit () {
+      this.$validator.validateAll().then((result) => {
+        if (result) {
+          CoursesController.create(this.course).
+            then((response) => {
+              console.log('ok', response);
+            }).catch(() => {
+              console.log('not ok');
+            });
+        } else {
+          console.log('error');
+        }
+      });
     },
-  };
+    clear () {
+      this.course = new Course();
+      this.$validator.reset();
+    },
+  },
+};
 </script>

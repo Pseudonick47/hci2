@@ -10,6 +10,7 @@ export default {
   },
 
   getApiUrl() {
-    return this.getHostName() + API_ROUTE;
+    // return this.getHostName() + API_ROUTE;
+    return this.getHostName();
   },
 };

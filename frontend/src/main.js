@@ -20,7 +20,7 @@ Vue.use(VeeValidate);
 
 Axios.defaults.baseURL = Config.getApiUrl();
 Axios.defaults.headers.Accept = 'application/json';
-Axios.defaults.headers['Access-Control-Allow-Origin'] = '*';
+// Axios.defaults.headers['Access-Control-Allow-Origin'] = '*';
 
 /* eslint-disable no-new */
 new Vue({
