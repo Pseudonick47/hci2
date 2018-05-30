@@ -1,5 +1,3 @@
-import * as _ from 'lodash';
-
 const USER_ROLES = {
   ADMIN: 'admin',
   USER: 'user',

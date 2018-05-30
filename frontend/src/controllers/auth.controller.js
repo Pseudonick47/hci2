@@ -1,5 +1,4 @@
 import Vue from 'vue';
-import * as _ from 'lodash';
 import Axios from 'axios';
 
 import store from 'Store';

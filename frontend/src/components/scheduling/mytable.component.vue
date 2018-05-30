@@ -41,15 +41,14 @@
   </table>
 </template>
 <script>
-import * as _ from 'lodash';
-
 const ACTIVE = 0;
 
 export default {
   name: 'MyTable',
   props: {
     headers: {
-      type: [Object, Array],
+      type: [Object,
+Array],
       required: true,
     },
     indices: {
@@ -75,8 +74,8 @@ export default {
       } else {
 
       }
-    }
-  }
+    },
+  },
 };
 
 </script>

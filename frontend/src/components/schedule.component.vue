@@ -165,7 +165,6 @@
   </div>
 </template>
 <script>
-// import * as _ from 'lodash';
 import { mapGetters } from 'vuex';
 import { VueDraggableMixin } from '@/mixins/drag-and-drop.mixin';
 
