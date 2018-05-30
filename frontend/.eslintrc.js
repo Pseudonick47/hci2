@@ -13,6 +13,7 @@ module.exports = {
 		'vue',
 		'html',
 	],
+	globals: { "_": true },
 	rules: {
 		'accessor-pairs': 'error',
 		'array-bracket-newline': 'error',

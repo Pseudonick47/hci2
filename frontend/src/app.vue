@@ -19,10 +19,12 @@
       </v-container>
     </v-content>
     <v-footer app/>
+    <help/>
   </v-app>
 </template>
 
 <script>
+import Help from 'Components/help/help-snackbar.component';
 import AuthController from 'Controllers/auth.controller';
 import { mapGetters } from 'vuex';
 
@@ -31,6 +33,9 @@ export default {
   data() {
     return {
     };
+  },
+  components: {
+    Help,
   },
   computed: {
     ...mapGetters([
@@ -69,7 +74,6 @@ html {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
   color: #2c3e50;
   margin-top: 60px;
   height: calc(100vh - 60px);
