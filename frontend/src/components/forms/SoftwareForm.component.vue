@@ -1,5 +1,10 @@
 <template>
-  <form class="pa-3">
+  <form
+    class="pa-3"
+    v-shortcuts="[
+      { shortcut: [ 'ctrl', 'enter' ], callback: () => submit(), disabled: isDisabled },
+    ]"
+  >
     <v-layout row>
       <v-text-field
         v-validate="'required'"
@@ -96,6 +101,7 @@
 <script>
 import { Software } from 'Models/software.model';
 import SoftwareController from 'Controllers/software.controller';
+import { mapGetters } from 'vuex';
 import store from 'Store';
 
 export default {
@@ -103,7 +109,12 @@ export default {
   data: () => ({
     software: new Software(),
   }),
-
+  computed: {
+    ...mapGetters(['currentForm']),
+    isDisabled() {
+      return this.currentForm !== 'software';
+    },
+  },
   methods: {
     submit () {
       this.$validator.validateAll().then((result) => {

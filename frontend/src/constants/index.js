@@ -1,4 +1,4 @@
-import { TEXTS } from './help';
+import { TEXTS, TAB_VALUES } from './help';
 
 const ENVIRONMENTS = {
   'localhost': 'dev',
@@ -15,4 +15,5 @@ export {
   ENVIRONMENTS,
   BACKEND_HOSTNAMES,
   TEXTS,
+  TAB_VALUES,
 };

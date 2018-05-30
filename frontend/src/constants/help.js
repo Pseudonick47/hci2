@@ -6,8 +6,18 @@ const TEXTS = {
   entities5: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
   schedule1: 'kliknes tu tamo i to je to',
   schedule2: 'isto kao i ovo prethodno samo mnogo drugacije ali snaci ces se',
+  navigation: 'ctrl 1 2 3 4 menja tab',
+  actions: 'ctrl enter submituje trenutnu formu',
+};
+
+const TAB_VALUES = {
+  '0': 'classroom',
+  '1': 'subject',
+  '2': 'course',
+  '3': 'software',
 };
 
 export {
   TEXTS,
+  TAB_VALUES,
 };

@@ -1,6 +1,14 @@
 <template>
   <v-layout row>
-    <v-dialog v-model="dialog" persistent max-width="1200px" style="height: 100%;">
+    <v-dialog
+      v-model="dialog"
+      persistent
+      max-width="1200px"
+      style="height: 100%;"
+      v-shortcuts="[
+        { shortcut: [ 'f1' ], callback: () => dialog = !dialog  },
+      ]"
+    >
       <v-icon slot="activator">help</v-icon>
       <v-card style="max-height: 100%">
         <v-card-title>
@@ -90,6 +98,15 @@ export default {
             items: [
               { title: 'Subject Selection', value: 'schedule1' },
               { title: 'Term Adding', value: 'schedule2' },
+            ],
+          },
+          {
+            action: 'keyboard',
+            route: 'arst',
+            title: 'Keyboard Shortcuts',
+            items: [
+              { title: 'Navigation', value: 'navigation' },
+              { title: 'Actions', value: 'actions' },
             ],
           },
         ],
