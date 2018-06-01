@@ -1,6 +1,9 @@
 <template>
   <v-app>
-    <v-toolbar app>
+    <v-toolbar
+      id="app-toolbar"
+      app
+    >
       <v-toolbar-title>CS Laboratories</v-toolbar-title>
       <v-spacer/>
       <v-btn
@@ -72,6 +75,10 @@ html {
   text-align: center;
   color: #2c3e50;
   margin-top: 60px;
-  height: calc(100vh - 60px);
+  min-height: calc(100vh - 60px);
+}
+
+#app-toolbar {
+  z-index: 500;
 }
 </style>

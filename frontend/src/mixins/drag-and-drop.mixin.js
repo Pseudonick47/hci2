@@ -103,7 +103,7 @@ const VueDraggableMixin = {
       for (let len = this.targets.length, i = 0; i < len; i++) {
         if (this.targets[i] !== this.selections.owner &&
           this.targets[i].getAttribute('aria-dropeffect') === 'none') {
-          this.targets[i].setAttribute('aria-dropeffect', 'move');
+          this.targets[i].setAttribute('aria-dropeffect', 'none');
           this.targets[i].setAttribute('tabindex', '0');
         }
       }
@@ -160,7 +160,9 @@ const VueDraggableMixin = {
       const oldItemDropzoneElements = document.querySelectorAll('.item-dropzone-area');
 
       for (let i = 0; i < oldItemDropzoneElements.length; i++) {
-        oldItemDropzoneElements[i].remove();
+        // oldItemDropzoneElements[i].remove();
+        oldItemDropzoneElements[i].setAttribute('rowspan', 1);
+        oldItemDropzoneElements[i].classList.remove('item-dropzone-area');
       }
     },
     registerListeners(el) {
@@ -429,6 +431,7 @@ const VueDraggableMixin = {
                 nativeEvent: e,
                 stop: this.stopDragAndDrop,
                 ...this.selections,
+                replacedEl: this.nextItemElement,
               });
           } catch (error) {
             this.removeOldDropzoneAreaElements();
@@ -439,22 +442,6 @@ const VueDraggableMixin = {
         // if we have a valid drop target reference
         // (which implies that we have some selected items)
         if (this.selections.droptarget) {
-          // append the selected items to the end of the target container
-          // for (let i = 0; i < this.selections.items.length; i++) {
-          //   if (this.nextItemElement) {
-          //     this.selections.droptarget.insertBefore(this.selections.items[i], this.nextItemElement);
-          //     continue;
-          //   }
-          //   this.selections.droptarget.appendChild(this.selections.items[i]);
-          // }
-          // console.log(_.cloneDeep(this.selections));
-          this.selections.droptarget.replaceChild(this.selections.items[0], this.nextItemElement);
-          const index = this.selections.indices[0];
-          const tag = this.selections.items[0].tagName.toLowerCase();
-          const owner = this.selections.owner;
-          const el = document.createElement(tag);
-          owner.insertBefore(el, owner.childNodes[index]);
-
           if (typeof this.defaultOptions.onDrop === 'function') {
             this.defaultOptions.onDrop({
               nativeEvent: e,
@@ -465,6 +452,7 @@ const VueDraggableMixin = {
                 `);
               },
               ...this.selections,
+              replacedEl: this.nextItemElement,
             });
           }
 
@@ -529,33 +517,38 @@ const VueDraggableMixin = {
       let dragoverCalls = 0;
 
       el.addEventListener('dragover', (e) => {
-        if (dragoverCalls % 10 !== 0 && e.target === previousTarget ||
+        this.nextItemElement = e.target.closest(this.defaultOptions.draggableSelector);
+
+        if (dragoverCalls % 10 !== 0 && this.nextItemElement === previousTarget ||
           !e.target || e.target.className === 'item-dropzone-area') {
             return;
           }
 
         dragoverCalls++;
-        previousTarget = e.target;
+        previousTarget = this.nextItemElement;
 
-        this.nextItemElement = e.target.closest(this.defaultOptions.draggableSelector);
         this.selections.droptarget = e.target.closest(this.defaultOptions.dropzoneSelector);
 
         if (this.selections.droptarget === this.selections.owner) {
           return;
         }
 
-        const itemDropzoneElement = document.createElement('div');
-
-        itemDropzoneElement.className = 'item-dropzone-area';
         this.removeOldDropzoneAreaElements();
 
-        if (this.selections.droptarget && this.nextItemElement) {
-          this.selections.droptarget.insertBefore(itemDropzoneElement, previousTarget);
+        if(this.nextItemElement) {
+          this.nextItemElement.classList.add('item-dropzone-area');
+          const info = this.nextItemElement.id.split('-');
+          const rowSpan = this.selections.items[0].rowSpan;
+
+          const row = Number(info[2]);
+          const col = Number(info[3]);
+
+          for (let i = 1; i < rowSpan; i++) {
+            const cell = document.getElementById(`schedule-cell-${row + i}-${col}`)
+            cell.classList.add('item-dropzone-area');
+          }
         }
 
-        if (this.selections.droptarget && !this.nextItemElement) {
-          this.selections.droptarget.appendChild(itemDropzoneElement);
-        }
       });
     },
     initiate(el) {

@@ -1,4 +1,4 @@
-import Schedule from 'Components/schedule.component';
+import Schedule from 'Components/scheduling/home.component';
 import Welcome from 'Components/welcome.component';
 
 export const routes = [
