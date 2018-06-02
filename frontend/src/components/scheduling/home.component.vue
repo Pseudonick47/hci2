@@ -6,7 +6,7 @@
 </template>
 <script>
 import Classes from 'Components/scheduling/classes.component';
-import DragAndDropArea from 'Components/scheduling/drag-and-drop-area-2.component';
+import DragAndDropArea from 'Components/scheduling/drag-and-drop-area.component';
 
 export default {
   name: 'Home',
