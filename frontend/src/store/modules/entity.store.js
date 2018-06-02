@@ -61,6 +61,14 @@ const getters = {
   headers: (state) => state.headers,
   tabs: (state) => state.tabs,
   classrooms: (state) => _.values(state.classrooms),
+  windowsSoftwares: (state) => _.values(_.filter(state.softwares, [
+'os',
+['windows'],
+])),
+  linuxSoftwares: (state) => _.values(_.filter(state.softwares, [
+  'os',
+  ['linux'],
+  ])),
   softwares: (state) => _.values(state.softwares),
   courses: (state) => _.values(state.courses),
   subjects: (state) => _.values(state.subjects),
@@ -82,6 +90,18 @@ const mutations = {
   },
   addSubject(state, data) {
     Vue.set(state.subjects, data.id, new Subject(data));
+  },
+  deleteClassroom(state, data) {
+    Vue.delete(state.classrooms, data.id);
+  },
+  deleteCourse(state, data) {
+    Vue.delete(state.courses, data.id);
+  },
+  deleteSubject(state, data) {
+    Vue.delete(state.subjects, data.id);
+  },
+  deleteSoftware(state, data) {
+    Vue.delete(state.softwares, data.id);
   },
   setClassrooms(state, data) {
     _.forEach(data, (x) => {

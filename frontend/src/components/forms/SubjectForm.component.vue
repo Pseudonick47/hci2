@@ -2,12 +2,12 @@
 <div>
   <v-dialog v-model="dialog" max-width="500px">
     <v-card>
-      <software-form v-if="entity=='software'"></software-form>
-      <course-form v-else></course-form>
+      <software-form :editOrCreate="'create'" v-if="entity=='software'" @clicked="closeChildDialog" @change="warning"></software-form>
+      <course-form :editOrCreate="'create'" v-else @clicked="closeChildDialog" @change="warning"></course-form>
       <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn flat @click="close">Cancel</v-btn>
-        </v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn flat @click="close">Cancel</v-btn>
+      </v-card-actions>
     </v-card>
   </v-dialog>
   <form
@@ -23,6 +23,7 @@
       label="Label"
       data-vv-name="label"
       required
+      clearable
       autofocus
     ></v-text-field>
     <span>&nbsp;&nbsp;&nbsp;</span>
@@ -33,6 +34,7 @@
       label="Title"
       data-vv-name="title"
       required
+      clearable
     ></v-text-field>
     </v-layout>
     <v-text-field
@@ -42,6 +44,7 @@
       label="Description"
       data-vv-name="description"
       required
+      clearable
     ></v-text-field>
     <v-layout row>
     <v-text-field
@@ -51,6 +54,7 @@
       label="Group size"
       data-vv-name="groupSize"
       required
+      clearable
       type="number"
     ></v-text-field>
     <span>&nbsp;</span>
@@ -61,6 +65,7 @@
       label="Min duration"
       data-vv-name="duration"
       required
+      clearable
       type="number"
     ></v-text-field>
     <span>&nbsp;</span>
@@ -71,34 +76,28 @@
       label="Lessons"
       data-vv-name="lessons"
       required
+      clearable
       type="number"
     ></v-text-field>
     </v-layout>
     <v-layout row>
     <v-select
-      :items="softwareList"
-      v-model="subject.software"
-      label="Software"
-      multiple
-    ></v-select>
-    <v-btn
-      icon
-      @click="newSoftware">
-      <v-icon>add</v-icon>
-    </v-btn>
-    </v-layout>
-    <v-layout row>
-    <v-select
       :items="courseList"
       v-model="subject.course"
-      label="Course"
+      label="Choose courses"
       multiple
+      item-text="title"
+      item-value="id"
     ></v-select>
-    <v-btn
-      icon
-      @click="newCourse">
-      <v-icon>add</v-icon>
-    </v-btn>
+    <v-tooltip bottom>
+      <v-btn
+        slot="activator"
+        icon
+        @click="newCourse">
+        <v-icon>add</v-icon>
+      </v-btn>
+      <span>Create course</span>
+    </v-tooltip>
     </v-layout>
     <v-layout row>
     <v-checkbox
@@ -141,6 +140,27 @@
       type="checkbox"
     ></v-checkbox>
     </v-layout>
+    <v-layout row>
+    <v-select
+      :items="softwareList"
+      v-model="subject.software"
+      label="Choose software"
+      multiple
+      autocomplete
+      item-text="title"
+      item-value="id"
+      hint="Please select OS first!"
+    ></v-select>
+    <v-tooltip bottom>
+      <v-btn
+        slot="activator"
+        icon
+        @click="newSoftware">
+        <v-icon>add</v-icon>
+      </v-btn>
+      <span>Create software</span>
+    </v-tooltip>
+    </v-layout>
 
     <v-btn @click="submit">submit</v-btn>
     <v-btn @click="clear">clear</v-btn>
@@ -162,6 +182,8 @@ export default {
   computed: {
     ...mapGetters([
       'softwares',
+      'windowsSoftwares',
+      'linuxSoftwares',
       'courses',
       'currentForm',
     ]),
@@ -169,14 +191,31 @@ export default {
       return this.currentForm !== 'subject';
     },
     softwareList() {
-      return _.map(this.softwares, (x) => x.title);
+      if (this.subject.os.length === 1 && this.subject.os[0] === 'windows') {
+        return _.map(this.windowsSoftwares, (x) => x);
+      } else if (this.subject.os.length === 1 && this.subject.os[0] === 'linux') {
+        return _.map(this.linuxSoftwares, (x) => x);
+      } else if (this.subject.os.length === 2) {
+        return _.map(this.softwares, (x) => x);
+      }
+      return _.map([]);
     },
     courseList() {
-      return _.map(this.courses, (x) => x.title);
+      return _.map(this.courses, (x) => x);
+    },
+  },
+  props: {
+    subject: {
+      type: Subject,
+      required: false,
+      default: () => new Subject(),
+    },
+    editOrCreate: {
+      type: String,
+      required: true,
     },
   },
   data: () => ({
-    subject: new Subject(),
     entity: '',
     dialog: false,
   }),
@@ -184,14 +223,23 @@ export default {
     submit () {
       this.$validator.validateAll().then((result) => {
         if (result) {
-          SubjectsController.create(this.subject).then(({ data }) => {
-            this.$alert.success('Successfully added! ');
-            store.commit('addSubject', data);
-          }).
-          catch(() => {
-            this.$alert.error('Error occurred.');
-          });
+          if (this.editOrCreate === 'create') {
+            SubjectsController.create(this.subject).then(({ data }) => {
+              this.$alert.success('Successfully added! ');
+              store.commit('addSubject', data);
+              this.clear();
+            }).
+            catch(() => {
+              this.$alert.error('Error occurred.');
+            });
+          } else if (this.editOrCreate === 'edit') {
+            SubjectsController.update(this.subject.id, this.subject).then(() => {
+              this.$alert.success('Successfully edited! ');
+              this.$emit('clicked');
+            });
+          }
         } else {
+          this.$emit('changed');
           this.$alert.warning('Please fill out the form.');
         }
       });
@@ -210,7 +258,13 @@ export default {
     },
     close() {
       this.dialog = false;
-      this.type = '';
+      this.entity = '';
+    },
+    closeChildDialog(value) {
+      this.dialog = value;
+    },
+    warning() {
+      this.$alert.warning('Please fill out the form.');
     },
   },
 };

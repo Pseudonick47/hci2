@@ -7,4 +7,10 @@ export default {
   list() {
     return ClassroomsApiService.list();
   },
+  delete(data) {
+    return ClassroomsApiService.delete(data);
+  },
+  update(id, data) {
+    return ClassroomsApiService.update(id, data);
+  },
 };

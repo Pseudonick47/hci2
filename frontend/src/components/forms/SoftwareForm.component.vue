@@ -13,6 +13,7 @@
         label="Label"
         data-vv-name="label"
         required
+        clearable
         autofocus
       ></v-text-field>
       <span>&nbsp;&nbsp;&nbsp;</span>
@@ -22,6 +23,7 @@
         :error-messages="errors.collect('title')"
         label="Title"
         data-vv-name="title"
+        clearable
         required
       ></v-text-field>
       </v-layout>
@@ -31,6 +33,7 @@
         :error-messages="errors.collect('description')"
         label="Description"
         data-vv-name="description"
+        clearable
         required
       ></v-text-field>
       <v-layout row>
@@ -40,6 +43,7 @@
         :error-messages="errors.collect('manufacturer')"
         label="Manufacturer"
         data-vv-name="manufacturer"
+        clearable
         required
       ></v-text-field>
       <span>&nbsp;&nbsp;</span>
@@ -50,6 +54,7 @@
         label="Publication year"
         data-vv-name="year"
         prepend-icon="event"
+        clearable
         required
         type="number"
       ></v-text-field>
@@ -61,6 +66,7 @@
         label="Site"
         data-vv-name="site"
         required
+        clearable
       ></v-text-field>
       <v-text-field
         v-validate="'required'"
@@ -69,6 +75,7 @@
         label="Price"
         data-vv-name="price"
         required
+        clearable
         type="number"
         suffix="$"
       ></v-text-field>
@@ -105,10 +112,18 @@ import { mapGetters } from 'vuex';
 import store from 'Store';
 
 export default {
-  name: 'ClassroomForm',
-  data: () => ({
-    software: new Software(),
-  }),
+  name: 'SoftwareForm',
+  props: {
+    software: {
+      type: Software,
+      required: false,
+      default: () => new Software(),
+    },
+    editOrCreate: {
+      type: String,
+      required: true,
+    },
+  },
   computed: {
     ...mapGetters(['currentForm']),
     isDisabled() {
@@ -119,14 +134,24 @@ export default {
     submit () {
       this.$validator.validateAll().then((result) => {
       if (result) {
-        SoftwareController.create(this.software).then(({ data }) => {
-          this.$alert.success('Successfully added! ');
-          store.commit('addSoftware', data);
-        }).
-        catch(() => {
-          this.$alert.error('Error occurred.');
-        });
+        if (this.editOrCreate === 'create') {
+          this.$emit('clicked', false);
+          SoftwareController.create(this.software).then(({ data }) => {
+            this.$alert.success('Successfully added! ');
+            store.commit('addSoftware', data);
+            this.clear();
+          }).
+          catch(() => {
+            this.$alert.error('Error occurred.');
+          });
+        } else if (this.editOrCreate === 'edit') {
+          SoftwareController.update(this.software.id, this.software).then(() => {
+              this.$alert.success('Successfully edited! ');
+              this.$emit('clicked');
+            });
+        }
       } else {
+        this.$emit('changed');
         this.$alert.warning('Please fill out the form.');
       }
     });

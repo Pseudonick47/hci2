@@ -2,7 +2,7 @@
 <div>
   <v-dialog v-model="dialog" max-width="500px">
     <v-card>
-      <software-form></software-form>
+      <software-form :editOrCreate="'create'" @clicked="closeChildDialog" @change="warning"></software-form>
       <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn flat @click="close">Cancel</v-btn>
@@ -21,6 +21,7 @@
       label="Label"
       data-vv-name="label"
       required
+      clearable
       autofocus
     ></v-text-field>
     <v-text-field
@@ -29,6 +30,7 @@
       :error-messages="errors.collect('description')"
       label="Description"
       data-vv-name="description"
+      clearable
       required
     ></v-text-field>
     <v-text-field
@@ -38,21 +40,9 @@
       label="Capacity"
       data-vv-name="capacity"
       required
+      clearable
       type="number"
     ></v-text-field>
-    <v-layout row>
-    <v-select
-      :items="softwareList"
-      v-model="classroom.software"
-      label="Software"
-      multiple
-    ></v-select>
-    <v-btn
-      icon
-      @click="newSoftware">
-      <v-icon>add</v-icon>
-    </v-btn>
-    </v-layout>
     <v-layout row>
     <v-checkbox
       v-model="classroom.projector"
@@ -83,6 +73,7 @@
       label="Windows"
       data-vv-name="os"
       type="checkbox"
+      required
     ></v-checkbox>
    <v-checkbox
       v-validate="'required'"
@@ -92,7 +83,29 @@
       label="Linux"
       data-vv-name="os"
       type="checkbox"
+      required
     ></v-checkbox>
+    </v-layout>
+    <v-layout row>
+    <v-select
+      :items="softwareList"
+      v-model="classroom.software"
+      label="Choose software"
+      multiple
+      item-text="title"
+      item-value="id"
+      autocomplete
+      hint="Please select OS first!"
+    ></v-select>
+    <v-tooltip bottom>
+      <v-btn
+        slot="activator"
+        icon
+        @click="newSoftware">
+        <v-icon>add</v-icon>
+      </v-btn>
+      <span>Create software</span>
+    </v-tooltip>
     </v-layout>
 
     <v-btn @click="submit">submit</v-btn>
@@ -116,30 +129,58 @@ export default {
       return this.currentForm !== 'classroom';
     },
     softwareList() {
-      return _.map(this.softwares, (x) => x.title);
+      if (this.classroom.os.length === 1 && this.classroom.os[0] === 'windows') {
+        return _.map(this.windowsSoftwares, (x) => x);
+      } else if (this.classroom.os.length === 1 && this.classroom.os[0] === 'linux') {
+        return _.map(this.linuxSoftwares, (x) => x);
+      } else if (this.classroom.os.length === 2) {
+        return _.map(this.softwares, (x) => x);
+      }
+      return _.map([]);
     },
     ...mapGetters([
       'softwares',
+      'windowsSoftwares',
+      'linuxSoftwares',
       'currentForm',
     ]),
   },
+  props: {
+    classroom: {
+      type: Classroom,
+      required: false,
+      default: () => new Classroom(),
+    },
+    editOrCreate: {
+      type: String,
+      required: true,
+    },
+  },
   data: () => ({
-    classroom: new Classroom(),
     dialog: false,
   }),
   methods: {
     submit () {
       this.$validator.validateAll().then((result) => {
       if (result) {
-        ClassroomsController.create(this.classroom).then(({ data }) => {
+        if (this.editOrCreate === 'create') {
+          ClassroomsController.create(this.classroom).then(({ data }) => {
             this.$alert.success('Successfully added! ');
             store.commit('addClassroom', data);
+            this.clear();
           }).
           catch(() => {
             this.$alert.error('Error occurred.');
           });
+        } else if (this.editOrCreate === 'edit') {
+          ClassroomsController.update(this.classroom.id, this.classroom).then(() => {
+            this.$alert.success('Successfully edited! ');
+            this.$emit('clicked');
+          });
+        }
       } else {
-          this.$alert.warning('Please fill out the form.');
+        this.$emit('changed');
+        this.$alert.warning('Please fill out the form.');
       }
     });
     },
@@ -147,14 +188,17 @@ export default {
       this.classroom = new Classroom();
       this.$validator.reset();
     },
-    newSoftware() {
-      this.dialog = true;
-    },
     close() {
       this.dialog = false;
     },
-    save() {
-      console.log('save');
+    newSoftware() {
+      this.dialog = true;
+    },
+    closeChildDialog(value) {
+      this.dialog = value;
+    },
+    warning() {
+      this.$alert.warning('Please fill out the form.');
     },
   },
 };
