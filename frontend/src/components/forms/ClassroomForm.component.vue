@@ -2,7 +2,7 @@
 <div>
   <v-dialog v-model="dialog" max-width="500px">
     <v-card>
-      <software-form :editOrCreate="'create'" @clicked="closeChildDialog" @change="warning"></software-form>
+      <software-form :editOrCreate="'create'" @change="warning"></software-form>
       <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn flat @click="close">Cancel</v-btn>
@@ -15,6 +15,7 @@
     ]"
   >
     <v-text-field
+      v-if="editOrCreate==='create'"
       v-validate="'required'"
       v-model="classroom.label"
       :error-messages="errors.collect('label')"
@@ -23,6 +24,12 @@
       required
       clearable
       autofocus
+    ></v-text-field>
+    <v-text-field
+      v-else
+      v-model="classroom.label"
+      label="Label"
+      disabled
     ></v-text-field>
     <v-text-field
       v-validate="'required'"
@@ -173,6 +180,7 @@ export default {
             this.$alert.error('Error occurred.');
           });
         } else if (this.editOrCreate === 'edit') {
+          this.classroom.software = this.classroom.software.map((x) => x.id);
           ClassroomsController.update(this.classroom.id, this.classroom).then(() => {
             this.$alert.success('Successfully edited! ');
             this.$emit('clicked');
@@ -185,7 +193,13 @@ export default {
     });
     },
     clear () {
-      this.classroom = new Classroom();
+      if (this.editOrCreate === 'edit') {
+        const label = this.classroom.label;
+        this.classroom = new Classroom();
+        this.classroom.label = label;
+      } else {
+        this.classroom = new Classroom();
+      }
       this.$validator.reset();
     },
     close() {
@@ -193,9 +207,6 @@ export default {
     },
     newSoftware() {
       this.dialog = true;
-    },
-    closeChildDialog(value) {
-      this.dialog = value;
     },
     warning() {
       this.$alert.warning('Please fill out the form.');

@@ -6,6 +6,7 @@
   >
     <v-layout row>
     <v-text-field
+      v-if="editOrCreate==='create'"
       v-validate="'required'"
       v-model="course.label"
       :error-messages="errors.collect('label')"
@@ -14,6 +15,12 @@
       clearable
       required
       autofocus
+    ></v-text-field>
+    <v-text-field
+      v-else
+      v-model="course.label"
+      label="Label"
+      disabled
     ></v-text-field>
     <span>&nbsp;&nbsp;&nbsp;</span>
     <v-text-field
@@ -116,6 +123,7 @@ export default {
               this.$alert.error('Error occurred.');
             });
           } else if (this.editOrCreate === 'edit') {
+            this.course.subjects = this.course.subjects.map((x) => x.id);
             CoursesController.update(this.course.id, this.course).then(() => {
               this.$alert.success('Successfully edited! ');
               this.$emit('clicked');
@@ -128,7 +136,13 @@ export default {
       });
     },
     clear () {
-      this.course = new Course();
+      if (this.editOrCreate === 'edit') {
+        const label = this.course.label;
+        this.course = new Course();
+        this.course.label = label;
+      } else {
+        this.course = new Course();
+      }
       this.$validator.reset();
     },
   },

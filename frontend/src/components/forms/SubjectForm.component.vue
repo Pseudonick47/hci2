@@ -2,8 +2,8 @@
 <div>
   <v-dialog v-model="dialog" max-width="500px">
     <v-card>
-      <software-form :editOrCreate="'create'" v-if="entity=='software'" @clicked="closeChildDialog" @change="warning"></software-form>
-      <course-form :editOrCreate="'create'" v-else @clicked="closeChildDialog" @change="warning"></course-form>
+      <software-form :editOrCreate="'create'" v-if="entity=='software'"  @change="warning"></software-form>
+      <course-form :editOrCreate="'create'" v-else @change="warning"></course-form>
       <v-card-actions>
         <v-spacer></v-spacer>
         <v-btn flat @click="close">Cancel</v-btn>
@@ -17,6 +17,7 @@
   >
     <v-layout row>
     <v-text-field
+      v-if="editOrCreate==='create'"
       v-validate="'required'"
       v-model="subject.label"
       :error-messages="errors.collect('label')"
@@ -25,6 +26,12 @@
       required
       clearable
       autofocus
+    ></v-text-field>
+    <v-text-field
+      v-else
+      v-model="subject.label"
+      label="Label"
+      disabled
     ></v-text-field>
     <span>&nbsp;&nbsp;&nbsp;</span>
     <v-text-field
@@ -86,6 +93,7 @@
       v-model="subject.course"
       label="Choose courses"
       multiple
+      autocomplete
       item-text="title"
       item-value="id"
     ></v-select>
@@ -238,6 +246,7 @@ export default {
           });
 
           if (this.editOrCreate === 'create') {
+            // this.$emit('clicked');
             SubjectsController.create(this.subject).then(({ data }) => {
               this.$alert.success('Successfully added! ');
               store.commit('addSubject', data);
@@ -247,6 +256,8 @@ export default {
               this.$alert.error('Error occurred.');
             });
           } else if (this.editOrCreate === 'edit') {
+            this.subject.software = this.subject.software.map((s) => s.id);
+            this.subject.course = this.subject.course.map((c) => c.id);
             SubjectsController.update(this.subject.id, this.subject).then(() => {
               this.$alert.success('Successfully edited! ');
               this.$emit('clicked');
@@ -259,7 +270,13 @@ export default {
       });
     },
     clear () {
-      this.subject = new Subject();
+      if (this.editOrCreate === 'edit') {
+        const label = this.subject.label;
+        this.subject = new Subject();
+        this.subject.label = label;
+      } else {
+        this.subject = new Subject();
+      }
       this.$validator.reset();
     },
     newSoftware() {
@@ -273,9 +290,6 @@ export default {
     close() {
       this.dialog = false;
       this.entity = '';
-    },
-    closeChildDialog(value) {
-      this.dialog = value;
     },
     warning() {
       this.$alert.warning('Please fill out the form.');
