@@ -47,7 +47,6 @@
           ></v-select>
         </v-layout>
       </v-card-title>
-    </v-card>
     <v-data-table
       :headers="headers"
       :search="search"
