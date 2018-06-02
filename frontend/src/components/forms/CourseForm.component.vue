@@ -11,6 +11,7 @@
       :error-messages="errors.collect('label')"
       label="Label"
       data-vv-name="label"
+      clearable
       required
       autofocus
     ></v-text-field>
@@ -21,6 +22,7 @@
       :error-messages="errors.collect('title')"
       label="Title"
       data-vv-name="title"
+      clearable
       required
     ></v-text-field>
     </v-layout>
@@ -31,6 +33,7 @@
       label="Description"
       data-vv-name="description"
       required
+      clearable
     ></v-text-field>
     <v-menu
       ref="dateMenu"
@@ -54,6 +57,7 @@
         persistent-hint
         prepend-icon="event"
         readonly
+        clearable
         data-vv-name="date"
         required
       />
@@ -75,29 +79,50 @@ import store from 'Store';
 import { mapGetters } from 'vuex';
 
 export default {
-  name: 'ClassroomForm',
+  name: 'CourseForm',
   computed: {
     ...mapGetters(['currentForm']),
     isDisabled() {
       return this.currentForm !== 'course';
     },
   },
-  data: () => ({
-    course: new Course(),
-    dateMenu: false,
-  }),
+  props: {
+    course: {
+      type: Course,
+      required: false,
+      default: () => new Course(),
+    },
+    editOrCreate: {
+      type: String,
+      required: true,
+    },
+  },
+  data() {
+    return {
+      dateMenu: false,
+    };
+  },
   methods: {
     submit () {
       this.$validator.validateAll().then((result) => {
         if (result) {
-          CoursesController.create(this.course).then(({ data }) => {
-            store.commit('addCourse', data);
-            this.$alert.success('Successfully added! ');
-          }).
-          catch(() => {
-            this.$alert.error('Error occurred.');
-          });
+          if (this.editOrCreate === 'create') {
+            CoursesController.create(this.course).then(({ data }) => {
+              store.commit('addCourse', data);
+              this.$alert.success('Successfully added! ');
+              this.clear();
+            }).
+            catch(() => {
+              this.$alert.error('Error occurred.');
+            });
+          } else if (this.editOrCreate === 'edit') {
+            CoursesController.update(this.course.id, this.course).then(() => {
+              this.$alert.success('Successfully edited! ');
+              this.$emit('clicked');
+            });
+          }
         } else {
+          this.$emit('changed');
           this.$alert.warning('Please fill out the form.');
         }
       });

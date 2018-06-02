@@ -7,4 +7,10 @@ export default {
   list() {
     return SoftwareApiService.list();
   },
+  delete(data) {
+    return SoftwareApiService.delete(data);
+  },
+  update(id, data) {
+    return SoftwareApiService.update(id, data);
+  },
 };

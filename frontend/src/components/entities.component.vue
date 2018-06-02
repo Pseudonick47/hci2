@@ -8,6 +8,18 @@
       { shortcut: [ 'ctrl', '4' ], callback: () => setTab('3') },
     ]"
   >
+    <v-dialog v-model="dialog" max-width="500px">
+      <v-card>
+        <classroom-form :editOrCreate="'edit'" :classroom="editingItem" v-if="tab==0" @clicked="closeChildDialog" @change="warning"></classroom-form>
+        <subject-form :editOrCreate="'edit'" :subject="editingItem" v-if="tab==1" @clicked="closeChildDialog" @change="warning"></subject-form>
+        <course-form :editOrCreate="'edit'" :course="editingItem" v-if="tab==2" @clicked="closeChildDialog" @change="warning"></course-form>
+        <software-form :editOrCreate="'edit'" :software="editingItem" v-if="tab==3" @clicked="closeChildDialog" @change="warning"></software-form>
+        <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn flat @click="close">Cancel</v-btn>
+          </v-card-actions>
+      </v-card>
+    </v-dialog>
     <v-tabs
       slot="extension"
       v-model="tab"
@@ -30,10 +42,10 @@
             class="mx-2"
           >
             <v-card class="pa-2">
-              <classroom-form v-if="item=='classroom'"></classroom-form>
-              <subject-form v-if="item=='subject'"></subject-form>
-              <software-form v-if="item=='software'"></software-form>
-              <course-form v-if="item=='course'"></course-form>
+              <classroom-form :editOrCreate="'create'" v-if="item=='classroom'"></classroom-form>
+              <subject-form :editOrCreate="'create'" v-if="item=='subject'"></subject-form>
+              <software-form :editOrCreate="'create'" v-if="item=='software'"></software-form>
+              <course-form :editOrCreate="'create'" v-if="item=='course'"></course-form>
             </v-card>
           </v-flex>
           <v-flex
@@ -46,6 +58,7 @@
                 :headers="getHeaders(item)"
                 :title="item"
                 :data="data[item]"
+                @clicked="onClickedEdit"
               ></Table>
             </v-card>
           </v-flex>
@@ -79,6 +92,8 @@ export default {
       subjectFormOpen: false,
       classroomFormOpen: false,
       courseFormOpen: false,
+      dialog: false,
+      editingItem: null,
     };
   },
   computed: {
@@ -127,6 +142,19 @@ export default {
     },
     getHeaders(entity) {
       return this.headers[entity];
+    },
+    close() {
+      this.dialog = false;
+    },
+    onClickedEdit(item) {
+      this.editingItem = item;
+      this.dialog = true;
+    },
+    closeChildDialog(value) {
+      this.dialog = value;
+    },
+    warning() {
+      this.$alert.warning('Please fill out the form.');
     },
   },
 };

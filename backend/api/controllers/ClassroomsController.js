@@ -9,13 +9,9 @@ module.exports = {
   async create(req, res) {
     let requestBody = req.body;
     let classroom = await Classrooms.create(requestBody).fetch();
+    // await Classrooms.addToCollection(requestBody.id, 'software').members(requestBody.software);
     return res.json(classroom);
   },
-
-  async get(req, res) {
-    let classrooms = await Classrooms.find();
-    return res.json(classrooms);
-  }
 
 };
 

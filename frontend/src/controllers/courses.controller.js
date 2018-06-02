@@ -7,4 +7,10 @@ export default {
   list() {
     return CoursesApiService.list();
   },
+  delete(data) {
+    return CoursesApiService.delete(data);
+  },
+  update(id, data) {
+    return CoursesApiService.update(id, data);
+  },
 };

@@ -12,10 +12,5 @@ module.exports = {
     return res.json(subject);
   },
 
-  async get(req, res) {
-    let subjects = await Subjects.find();
-    return res.json(subjects);
-  }
-
 };
 
