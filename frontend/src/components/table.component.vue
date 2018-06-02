@@ -55,7 +55,7 @@
     >
       <template slot="items" slot-scope="props">
         <tr>
-          <td 
+          <td
             v-for="(header) in headers"
             :key="header.text"
           >{{ showItem(props.item, header.value) }}
