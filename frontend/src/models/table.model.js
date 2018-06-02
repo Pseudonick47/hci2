@@ -28,6 +28,7 @@ export class TableModel {
     ];
 
     const headers = [];
+
     _.each(days, (day) => {
       const subheaders = [];
 
@@ -35,41 +36,44 @@ export class TableModel {
         subheaders.push({ text: lab, colspan: 1 });
       });
 
-      headers.push({ text: day, colspan: labs.length, subheaders });
+      headers.push({ text: day, colspan: labs.length, rowspan: 1, subheaders });
     });
 
-    const timePoints = this.generateTimePoints(420, 1320, 15);
-    const data = [];
+    const indexHeader = { text: 'Time', colspan: 1, rowspan: 2 };
+    const indices = this.generateTimePoints(420, 1320, 15);
+    const cells = [];
 
-    const n_cols = days.length * labs.length;
+    const n_cells = days.length * labs.length;
 
-    _.each(timePoints, (point) => {
+    _.times(indices.length, (i) => {
       const row = [];
 
-      row.push({
-        active: true,
-        disabled: false,
-        colspan: 1,
-        rowspan: 1,
-        text: point,
-        replaceable: false,
-        meta: 'index',
-      });
-
-      _.times(n_cols, () => {
+      _.times(n_cells, (j) => {
         row.push({
+          row: i,
+          col: j,
+          visible: true,
           active: true,
-          disabled: false,
           colspan: 1,
           rowspan: 1,
-          replaceable: true,
+          dropzone: false,
+          changeable: true,
+          dropeffect: 'none',
+          draggable: false,
+          grabbed: false,
         });
       });
 
-      data.push(row);
+      cells.push(row);
     });
 
-    return new TableModel({ name, headers, data });
+    return new TableModel({
+      name,
+      headers,
+      indexHeader,
+      indices,
+      cells,
+    });
   }
 
   static generateTimePoints(start, end, step) {

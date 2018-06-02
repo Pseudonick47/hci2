@@ -1,9 +1,52 @@
 <template>
   <v-navigation-drawer
     v-model="drawer"
-    :mini-variant.sync="mini"
     id="classes-drawer"
+    left
   >
+    <v-toolbar
+      class="transparent"
+      flat
+    >
+      <v-list class="pa-0">
+        <v-list-tile>
+          <v-list-tile-content>
+            {{ schedule.name }}
+          </v-list-tile-content>
+          <v-list-tile-action pr-1>
+            <v-btn
+              icon
+              small
+              @click="options = !options"
+            >
+              <v-icon>settings</v-icon>
+            </v-btn>
+          </v-list-tile-action>
+        </v-list-tile>
+      </v-list>
+    </v-toolbar>
+    <v-divider />
+    <transition name="grow">
+      <div v-show="options">
+        <v-btn
+          flat
+          block
+        >New</v-btn>
+        <v-btn
+          flat
+          block
+        >Save</v-btn>
+        <v-btn
+          flat
+          block
+        >Load</v-btn>
+        <v-btn
+          flat
+          block
+        >Auto</v-btn>
+        <v-divider />
+      </div>
+    </transition>
     <v-toolbar
       class="transparent"
       flat
@@ -15,14 +58,6 @@
           </v-list-tile-avatar>
           <v-list-tile-content>
           </v-list-tile-content>
-          <v-list-tile-action>
-            <v-btn
-              icon
-              @click.native.stop="mini = !mini"
-            >
-              <v-icon>chevron_left</v-icon>
-            </v-btn>
-          </v-list-tile-action>
         </v-list-tile>
       </v-list>
     </v-toolbar>
@@ -38,28 +73,28 @@
         <v-list-tile
           slot="activator"
         >
-          <v-list-tile-action>{{ course.id }}</v-list-tile-action>
+          <div class="body-2 mr-3">{{ course.label }}</div>
           <v-list-tile-content
-            @mouseenter="displayName(course.name, $event)"
+            @mouseenter="displayName(course.title, $event)"
             @mouseleave="hideName"
             @click="hideName"
           >
-            <v-list-tile-title>{{ clip(course.name, 30) }}</v-list-tile-title>
+            <v-list-tile-title>{{ clip(course.title, 27) }}</v-list-tile-title>
           </v-list-tile-content>
         </v-list-tile>
         <v-list-tile
-          v-for="clas in course.classes"
-          :key="clas.id"
+          v-for="subject in course.subjects"
+          :key="subject.id"
           class="pl-3"
-          @click="selected(clas)"
+          @click="selected(subject)"
         >
-          <v-list-tile-action>{{ clas.id }}</v-list-tile-action>
+          <div class="body-2 mr-3">{{ subject.label }}</div>
           <v-list-tile-content
-            @mouseenter="displayName(clas.name, $event)"
+            @mouseenter="displayName(subject.title, $event)"
             @mouseleave="hideName"
             @click="hideName"
           >
-            <v-list-tile-title>{{ clip(clas.name, 33) }}</v-list-tile-title>
+            <v-list-tile-title>{{ clip(subject.title, 33) }}</v-list-tile-title>
           </v-list-tile-content>
         </v-list-tile>
       </v-list-group>
@@ -83,19 +118,28 @@ export default {
   data() {
     return {
       drawer: null,
-      mini: null,
+      options: false,
       courseTileState: null,
       tooltip: null,
     };
   },
   computed: {
-    ...mapGetters('courses', {
-      courses: 'all',
+    ...mapGetters('schedule', {
+      schedule: 'get',
     }),
+    courses() {
+      const courses = this.$store.getters.courses;
+      const subjects = this.$store.getters.subjects;
+
+      _.each(courses, (c) => {
+        c.subjects = _.filter(subjects, (s) => _.find(s.course, { id: c.id }))
+      });
+      return courses;
+    }
   },
   methods: {
-    selected(clas) {
-      console.log(clas);
+    selected(subject) {
+      this.$emit('selected', subject);
     },
     clip(str, num) {
       if (str.length > num) {
@@ -122,5 +166,20 @@ export default {
 <style>
 .list__group:after, .list__group:before {
   left: 0;
+}
+
+.grow-enter-active, .grow-leave-active {
+  transition: opacity .7s;
+}
+
+.grow-enter, .grow-leave-to {
+  opacity: 0;
+}
+
+#classes-drawer {
+  position: fixed;
+  left: 0;
+  top: 64px;
+  height: 100%;
 }
 </style>

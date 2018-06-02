@@ -62,12 +62,12 @@ const getters = {
   tabs: (state) => state.tabs,
   classrooms: (state) => _.values(state.classrooms),
   windowsSoftwares: (state) => _.values(_.filter(state.softwares, [
-'os',
-['windows'],
-])),
+    'os',
+    ['windows'],
+  ])),
   linuxSoftwares: (state) => _.values(_.filter(state.softwares, [
-  'os',
-  ['linux'],
+    'os',
+    ['linux'],
   ])),
   softwares: (state) => _.values(state.softwares),
   courses: (state) => _.values(state.courses),

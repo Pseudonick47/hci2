@@ -114,9 +114,6 @@ export default {
       'softwares',
     ]),
   },
-  mounted() {
-    this.getData();
-  },
   watch: {
     tab(x) {
       store.commit('setCurrentForm', TAB_VALUES[x]);

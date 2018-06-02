@@ -11,6 +11,4 @@ module.exports = {
     let course = await Courses.create(requestBody).fetch();
     return res.json(course);
   },
-  
 };
-

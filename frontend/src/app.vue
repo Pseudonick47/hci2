@@ -17,7 +17,7 @@
     </v-toolbar>
     <v-content>
       <v-container
-        px-0
+        class="px-0 mx-0"
         pt-1
         style="min-height: 100%;"
       >
@@ -34,6 +34,11 @@ import Help from 'Components/help/help-snackbar.component';
 import AuthController from 'Controllers/auth.controller';
 import AlertBox from 'Components/helpers/AlertHelper.component';
 import { mapGetters } from 'vuex';
+
+import CoursesController from 'Controllers/courses.controller';
+import SubjectsController from 'Controllers/subjects.controller';
+import ClassroomsController from 'Controllers/classrooms.controller';
+import SoftwareController from 'Controllers/software.controller';
 
 export default {
   name: 'App',
@@ -54,6 +59,9 @@ export default {
       'showAlert',
     ]),
   },
+  beforeMount() {
+    this.getData();
+  },
   methods: {
     logout() {
       AuthController.logout();
@@ -63,6 +71,20 @@ export default {
     },
     goToEntities() {
       this.$router.push({ name: 'entities' });
+    },
+    getData() {
+      ClassroomsController.list().then(({ data }) => {
+        this.$store.commit('setClassrooms', data);
+      });
+      CoursesController.list().then(({ data }) => {
+        this.$store.commit('setCourses', data);
+      });
+      SubjectsController.list().then(({ data }) => {
+        this.$store.commit('setSubjects', data);
+      });
+      SoftwareController.list().then(({ data }) => {
+        this.$store.commit('setSoftwares', data);
+      });
     },
   },
 };
@@ -89,6 +111,7 @@ html {
   color: #2c3e50;
   margin-top: 60px;
   min-height: calc(100vh - 60px);
+  background: white;
 }
 
 #app-toolbar {

@@ -10,7 +10,7 @@ module.exports = {
   attributes: {
     label: { type: 'string', unique: true, required: true },
     software: { collection: 'software', via: 'classroom'}
-  },  
+  },
 
 };
 
