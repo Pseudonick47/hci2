@@ -132,10 +132,10 @@ export default {
       const subjects = this.$store.getters.subjects;
 
       _.each(courses, (c) => {
-        c.subjects = _.filter(subjects, (s) => _.find(s.course, { id: c.id }))
+        c.subjects = _.filter(subjects, (s) => _.find(s.course, { id: c.id }));
       });
       return courses;
-    }
+    },
   },
   methods: {
     selected(subject) {

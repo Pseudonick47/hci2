@@ -161,6 +161,8 @@
 </template>
 <script>
 import { mapGetters } from 'vuex';
+
+// eslint-disable-next-line
 const panzoom = require('panzoom');
 
 export default {
@@ -224,9 +226,9 @@ export default {
     panzoom(area, {
       smoothScroll: false,
       beforeWheel(e) {
-        var shouldIgnore = !e.altKey;
+        const shouldIgnore = !e.altKey;
         return shouldIgnore;
-      }
+      },
     });
   },
   methods: {
