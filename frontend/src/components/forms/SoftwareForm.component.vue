@@ -135,7 +135,6 @@ export default {
       this.$validator.validateAll().then((result) => {
       if (result) {
         if (this.editOrCreate === 'create') {
-          this.$emit('clicked', false);
           SoftwareController.create(this.software).then(({ data }) => {
             this.$alert.success('Successfully added! ');
             store.commit('addSoftware', data);

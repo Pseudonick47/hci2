@@ -86,6 +86,7 @@
       v-model="subject.course"
       label="Choose courses"
       multiple
+      autocomplete
       item-text="title"
       item-value="id"
     ></v-select>

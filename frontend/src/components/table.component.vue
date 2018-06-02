@@ -125,19 +125,16 @@ export default {
             return item.os[0] === this.filterParams.os || item.os[1] === this.filterParams.os;
           });
         }
-
         if (this.filterParams.board !== '') {
           result = result.filter((item) => {
             return item.board === this.filterParams.board;
           });
         }
-
         if (this.filterParams.smartBoard !== '') {
           result = result.filter((item) => {
             return item.smartBoard === this.filterParams.smartBoard;
           });
         }
-
         if (this.filterParams.projector !== '') {
           result = result.filter((item) => {
             return item.projector === this.filterParams.projector;
