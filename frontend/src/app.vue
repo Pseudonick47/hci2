@@ -75,6 +75,7 @@ export default {
     getData() {
       ClassroomsController.list().then(({ data }) => {
         this.$store.commit('setClassrooms', data);
+        this.$store.commit('schedule/initialize', { labs: data });
       });
       CoursesController.list().then(({ data }) => {
         this.$store.commit('setCourses', data);

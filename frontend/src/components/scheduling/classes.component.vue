@@ -86,7 +86,7 @@
           v-for="subject in course.subjects"
           :key="subject.id"
           class="pl-3"
-          @click="selected(subject)"
+          @click="selected(course, subject)"
         >
           <div class="body-2 mr-3">{{ subject.label }}</div>
           <v-list-tile-content
@@ -134,12 +134,13 @@ export default {
       _.each(courses, (c) => {
         c.subjects = _.filter(subjects, (s) => _.find(s.course, { id: c.id }));
       });
+
       return courses;
     },
   },
   methods: {
-    selected(subject) {
-      this.$emit('selected', subject);
+    selected(course, subject) {
+      this.$emit('selected', { course, subject });
     },
     clip(str, num) {
       if (str.length > num) {

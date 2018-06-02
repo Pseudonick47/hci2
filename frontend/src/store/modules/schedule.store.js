@@ -1,9 +1,9 @@
-import { TableModel } from 'Models/table.model';
+import { ScheduleModel } from 'Models/schedule.model';
 
 const namespaced = true;
 
 const state = {
-  schedule: TableModel.testModel(),
+  schedule: null,
 };
 
 const getters = {
@@ -12,7 +12,10 @@ const getters = {
 
 const mutations = {
   set(state, schedule) {
-    state.schedule = new TableModel(schedule);
+    state.schedule = new ScheduleModel({}, schedule);
+  },
+  initialize(state, props) {
+    state.schedule = new ScheduleModel(props);
   },
 };
 

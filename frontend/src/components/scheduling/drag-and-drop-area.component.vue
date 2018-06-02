@@ -72,12 +72,10 @@
                 @drop="onScheduleDrop($event, cell)"
               >
                 <v-card
-                  v-if="cell.text"
-                  class="term-card"
+                  v-if="cell.draggable"
+                  class="term-card elevation-3"
                 >
-                  <div class="title">
-                    {{ cell.text }}
-                  </div>
+                  <div class="title my-vertical-text">{{ cell.course.label }} {{ cell.subject.label }}</div>
                 </v-card>
               </td>
             </tr>
@@ -87,6 +85,7 @@
       </v-layout>
     </v-container>
     <v-navigation-drawer
+      v-if="course && subject"
       v-model="termDrawer"
       class="pt-3"
       id="terms-drawer"
@@ -103,8 +102,8 @@
           <v-list class="pa-2">
             <v-list-tile>
               <v-list-tile-content>
-                <v-list-tile-title>HCI</v-list-tile-title>
-                <v-list-tile-sub-title>3 unassigned terms</v-list-tile-sub-title>
+                <v-list-tile-title>{{ course.label }} {{ subject.title }}</v-list-tile-title>
+                <v-list-tile-sub-title>{{ unassigned }} unassigned terms</v-list-tile-sub-title>
               </v-list-tile-content>
             </v-list-tile>
           </v-list>
@@ -139,10 +138,10 @@
                 @drop="onTermsDrop($event, term)"
               >
                 <v-card
-                  v-if="term.text"
+                  v-if="term.draggable"
                   class="term-card elevation-3"
                 >
-                  <div class="title my-vertical-text">{{ term.text }}</div>
+                  <div class="title my-vertical-text">{{ term.course.label }} {{ term.subject.label }}</div>
                 </v-card>
               </td>
             </tr>
@@ -162,54 +161,29 @@
 <script>
 import { mapGetters } from 'vuex';
 
+import { Course } from 'Models/course.model';
+import { Subject } from 'Models/subject.model';
+import { Term } from 'Models/term.model';
+
 // eslint-disable-next-line
 const panzoom = require('panzoom');
 
 export default {
-  name: 'DragAndDropArea2',
+  name: 'DragAndDropArea',
+  props: {
+    course: {
+      type: Course,
+      required: false,
+      default: () => null,
+    },
+    subject: {
+      type: Subject,
+      required: false,
+      default: () => null,
+    },
+  },
   data: () => ({
     termDrawer: true,
-    terms: [
-      {
-        id: 1,
-        row: 0,
-        visible: true,
-        active: true,
-        colspan: 1,
-        rowspan: 3,
-        dropeffect: 'none',
-        draggable: true,
-        grabbed: false,
-        changeable: false,
-        text: 'HCI',
-      },
-      {
-        id: 2,
-        row: 1,
-        visible: true,
-        active: true,
-        colspan: 1,
-        rowspan: 3,
-        dropeffect: 'none',
-        draggable: true,
-        grabbed: false,
-        changeable: false,
-        text: 'HCI',
-      },
-      {
-        id: 3,
-        row: 2,
-        visible: true,
-        active: true,
-        colspan: 1,
-        rowspan: 3,
-        dropeffect: 'none',
-        draggable: true,
-        grabbed: false,
-        changeable: false,
-        text: 'HCI',
-      },
-    ],
     dnd: {
       origin: null,
       target: null,
@@ -220,6 +194,33 @@ export default {
     ...mapGetters('schedule', {
       schedule: 'get',
     }),
+    unassigned() {
+      return _.filter(this.subject.terms[this.course.id], { assigned: false }).length;
+    },
+    terms() {
+      if (!this.subject) {
+        return [];
+      }
+      return _.map(this.subject.terms[this.course.id], (t) => {
+        if (!t.assigned) {
+          return new Term({ ...t, course: this.course, subject: this.subject });
+        } else {
+          return {
+            row: null,
+            col: null,
+            visible: true,
+            active: true,
+            colspan: 1,
+            rowspan: Math.ceil(this.subject.duration / 15),
+            dropzone: false,
+            changeable: true,
+            dropeffect: 'none',
+            draggable: false,
+            grabbed: false,
+          };
+        }
+      });
+    }
   },
   mounted() {
     const area = document.getElementById('area-container');
@@ -241,6 +242,18 @@ export default {
         }
         return;
       }
+
+      console.log(cell, this.course, this.subject);
+      if (origin === 'schedule' &&
+          (cell.course.id !== this.course.id ||
+          cell.subject.id !== this.subject.id)) {
+            console.log('here');
+            this.$emit('changeSubject', {
+              course: cell.course,
+              subject: cell.subject
+            });
+          }
+
       cell.grabbed = true;
       this.dnd.item = cell;
       this.dnd.origin = origin;
@@ -270,6 +283,7 @@ export default {
     onDragstart(event, cell) {
       event.dataTransfer.setData('text', '');
       this.dnd.item = cell;
+      this.dnd.drop = false;
     },
     onDragend() {
       this.clearPreviousDropzones();
@@ -319,7 +333,9 @@ export default {
       }
     },
     onDragleave() {
-      this.clearPreviousDropzones();
+      if (this.dnd.previousDropzones) {
+        this.clearPreviousDropzones();
+      }
     },
     onScheduleDrop(event, cell) {
       if (!cell.changeable) {
@@ -384,6 +400,9 @@ export default {
         this.schedule.cells[itemCopy.row][itemCopy.col] = cell;
       }
 
+      const term = _.find(item.subject.terms[item.course.id], { id: item.id });
+      term.assigned = true;
+
       this.dnd.item = null;
       this.dnd.origin = null;
 
@@ -440,6 +459,9 @@ export default {
         });
       }
 
+      const term = _.find(item.subject.terms[item.course.id], { id: item.id });
+      term.assigned = false;
+
       this.dnd.item = null;
       this.dnd.origin = null;
 
@@ -461,6 +483,9 @@ export default {
 .schedule-table {
   border: 1px solid rgb(180, 180, 180);
   border-collapse: collapse;
+  border-radius: 10px;
+  height: 100%;
+  width: 100%;
 }
 
 .schedule-cell {
@@ -468,18 +493,28 @@ export default {
   border-collapse: collapse;
 }
 
-.schedule-header, .schedule-subheader, .schedule-index {
+.schedule-header, .schedule-subheader {
+  /* border: 1px solid rgb(83, 83, 83); */
+  cursor: move;
+}
+
+.schedule-index {
   border: 1px solid rgb(180, 180, 180);
   cursor: move;
 }
 
-.schedule-header-container, .schedule-index {
+.schedule-header-container {
+  background: rgb(54, 54, 54);
+  color: whitesmoke;
+}
+
+.schedule-index {
   background: rgb(218, 218, 218);
   color: rgb(61, 60, 60);
 }
 
 .schedule-header {
-  background: rgb(204, 204, 204);
+  /* background: rgb(204, 204, 204); */
   height: 45px;
 }
 
@@ -489,11 +524,6 @@ export default {
 
 .schedule-subheader{
   height: 35px;
-}
-
-.schedule-table {
-  height: 100%;
-  width: 100%;
 }
 
 .schedule-row:nth-child(even) {
