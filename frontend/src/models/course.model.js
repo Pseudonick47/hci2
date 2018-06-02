@@ -1,7 +1,9 @@
-import * as _ from 'lodash';
-
 export class Course {
   constructor(data) {
-    _.assign(this, data);
+    this.label = '';
+    this.title = '';
+    this.description = '';
+    this.date = null;
+    _.assignWith(this, data);
   }
 }

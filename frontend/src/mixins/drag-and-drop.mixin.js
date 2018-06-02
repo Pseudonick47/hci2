@@ -1,6 +1,4 @@
 /* eslint-disable */
-import * as _ from 'lodash';
-
 const VueDraggableMixin = {
   data() {
     return {

@@ -1,5 +1,6 @@
 <template>
   <v-app>
+    <alert-box v-if="showAlert"/>
     <v-toolbar
       id="app-toolbar"
       app
@@ -10,23 +11,28 @@
         flat
         @click="goToSchedule"
       >Schedule</v-btn>
-      <v-btn flat>Entities</v-btn>
+      <v-btn
+        flat
+        @click="goToEntities">Entities</v-btn>
     </v-toolbar>
     <v-content>
       <v-container
-        fluid
-        pa-0
-        fill-height
+        px-0
+        pt-1
+        style="min-height: 100%;"
       >
         <router-view/>
       </v-container>
     </v-content>
     <v-footer app/>
+    <help/>
   </v-app>
 </template>
 
 <script>
+import Help from 'Components/help/help-snackbar.component';
 import AuthController from 'Controllers/auth.controller';
+import AlertBox from 'Components/helpers/AlertHelper.component';
 import { mapGetters } from 'vuex';
 
 export default {
@@ -35,12 +41,17 @@ export default {
     return {
     };
   },
+  components: {
+    'alert-box': AlertBox,
+    Help,
+  },
   computed: {
     ...mapGetters([
       'activeUser',
       'isAdmin',
       'isLogged',
       'activeUserRole',
+      'showAlert',
     ]),
   },
   methods: {
@@ -49,6 +60,9 @@ export default {
     },
     goToSchedule() {
       this.$router.push({ name: 'schedule' });
+    },
+    goToEntities() {
+      this.$router.push({ name: 'entities' });
     },
   },
 };
@@ -72,7 +86,6 @@ html {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
   color: #2c3e50;
   margin-top: 60px;
   min-height: calc(100vh - 60px);
