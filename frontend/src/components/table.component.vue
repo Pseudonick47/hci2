@@ -4,27 +4,30 @@
     <v-card>
       <v-card-title>
         <v-layout column>
+          <div v-if="title=='classroom' || title=='subject'">
+            <span style="color:grey;font-size:18px;">Filter by:</span>
             <v-checkbox
-              v-if="title=='classroom' || title=='subject'"
-              v-model="filterBoard"
-              value="board"
+              v-model="filterParams.board"
+              value="yes"
               label="Board required"
               type="checkbox"
+              @change="filterBy"
             ></v-checkbox>
             <v-checkbox
-              v-if="title=='classroom' || title=='subject'"
-              v-model="filterSmartBoard"
-              value="smartBoard"
+              v-model="filterParams.smartBoard"
+              value="yes"
               label="Smart board required"
               type="checkbox"
+              @change="filterBy"
             ></v-checkbox>
             <v-checkbox
-              v-if="title=='classroom' || title=='subject'"
-              v-model="filterProjector"
-              value="projector"
+              v-model="filterParams.projector"
+              value="yes"
               label="Projector required"
               type="checkbox"
+              @change="filterBy"
             ></v-checkbox>
+          </div>
         </v-layout>
         <v-layout column wrap>
         <v-text-field
@@ -36,21 +39,24 @@
         ></v-text-field>
         <span>&nbsp;&nbsp;&nbsp;</span>
         <v-select
-            v-if="title!='course'"
-            :items="['linux','windows']"
-            v-model="filterOs"
-            label="Filter by OS"
-            chips
-            overflow
-            deletable-chips
-            dense
-          ></v-select>
+          v-if="title!='course'"
+          :items="[{name:'Linux',value:'linux'},{name:'Windows',value:'windows'}]"
+          v-model="filterParams.os"
+          label="Filter by OS"
+          overflow
+          item-text="name"
+          item-value="value"
+          dense
+          chips
+          deletable-chips
+          @input="filterBy"
+        ></v-select>
         </v-layout>
       </v-card-title>
     <v-data-table
       :headers="headers"
       :search="search"
-      :items="data"
+      :items="filteredData"
       class="elevation-1"
     >
       <template slot="items" slot-scope="props">
@@ -95,17 +101,53 @@ import store from 'Store';
 
 export default {
   name: 'Table',
-  data: () => ({
+  data() {
+ return {
     search: '',
     dialog: false,
     confirmDialog: false,
     itemToDelete: null,
-  }),
+    filterParams: { os: '', board: '', smartBoard: '', projector: '' },
+    filter: false,
+  };
+},
   props: [
     'headers',
     'title',
     'data',
   ],
+  computed: {
+    filteredData() {
+      if (this.filter) {
+        let result = this.data;
+        if (this.filterParams.os !== '') {
+          result = result.filter((item) => {
+            return item.os[0] === this.filterParams.os || item.os[1] === this.filterParams.os;
+          });
+        }
+
+        if (this.filterParams.board !== '') {
+          result = result.filter((item) => {
+            return item.board === this.filterParams.board;
+          });
+        }
+
+        if (this.filterParams.smartBoard !== '') {
+          result = result.filter((item) => {
+            return item.smartBoard === this.filterParams.smartBoard;
+          });
+        }
+
+        if (this.filterParams.projector !== '') {
+          result = result.filter((item) => {
+            return item.projector === this.filterParams.projector;
+          });
+        }
+        return result;
+      }
+      return this.data;
+    },
+  },
   methods: {
     showItem (item, header) {
       if (header === 'course') {
@@ -148,12 +190,29 @@ export default {
       }
       this.confirmDialog = false;
     },
-    getTableTitle(title) {
-      if (title === 'software') {
-        return title;
+    filterBy() {
+      if (this.filterParams.board === null) {
+        this.filterParams.board = '';
       }
-      return title + 's';
-  },
+      if (this.filterParams.smartBoard === null) {
+        this.filterParams.smartBoard = '';
+      }
+      if (this.filterParams.projector === null) {
+        this.filterParams.projector = '';
+      }
+      if (this.filterParams.os === null) {
+        this.filterParams.os = '';
+      }
+
+      if (this.filterParams.os === '' &&
+        this.filterParams.board === '' &&
+        this.filterParams.smartBoard === '' &&
+        this.filterParams.projector === '') {
+          this.filter = false;
+      } else {
+        this.filter = true;
+      }
+    },
   },
 };
 </script>
