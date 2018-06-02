@@ -147,8 +147,8 @@ export default {
       this.editingItem = item;
       this.dialog = true;
     },
-    closeChildDialog(value) {
-      this.dialog = value;
+    closeChildDialog() {
+      this.dialog = false;
     },
     warning() {
       this.$alert.warning('Please fill out the form.');

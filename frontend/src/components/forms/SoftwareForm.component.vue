@@ -7,6 +7,7 @@
   >
     <v-layout row>
       <v-text-field
+        v-if="editOrCreate==='create'"
         v-validate="'required'"
         v-model="software.label"
         :error-messages="errors.collect('label')"
@@ -15,6 +16,12 @@
         required
         clearable
         autofocus
+      ></v-text-field>
+      <v-text-field
+        v-else
+        v-model="software.label"
+        label="Label"
+        disabled
       ></v-text-field>
       <span>&nbsp;&nbsp;&nbsp;</span>
       <v-text-field
@@ -156,7 +163,13 @@ export default {
     });
     },
     clear () {
-      this.software = new Software();
+      if (this.editOrCreate === 'edit') {
+        const label = this.software.label;
+        this.software = new Software();
+        this.software.label = label;
+      } else {
+        this.software = new Software();
+      }
       this.$validator.reset();
     },
   },
