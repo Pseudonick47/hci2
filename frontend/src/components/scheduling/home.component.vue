@@ -1,21 +1,40 @@
 <template>
   <div
-    v-if="schedule"
     id="schedule-container"
   >
-    <classes @selected="subjectSelected"/>
+    <classes
+      :schedule="schedule"
+      @selected="subjectSelected"
+      @newSchedule="newScheduleRequested = true"
+      @loadSchedule="loadScheduleRequested = true"
+      @saveSchedule="saveSchedule"
+    />
     <drag-and-drop-area
+      v-if="schedule"
       :course="course"
       :subject="subject"
-      :terms="terms"
+      :schedule="schedule"
       @changeSubject="subjectSelected"
+    />
+    <new-schedule-dialog
+      v-if="newScheduleRequested"
+      @cancel="newScheduleRequested = false"
+      @confirm="createSchedule"
+    />
+    <load-schedule-dialog
+      v-if="loadScheduleRequested"
+      @cancel="loadScheduleRequested = false"
+      @confirm="loadSchedule"
     />
   </div>
 </template>
 <script>
 import Classes from 'Components/scheduling/classes.component';
 import DragAndDropArea from 'Components/scheduling/drag-and-drop-area.component';
-import { mapGetters } from 'vuex';
+import NewScheduleDialog from 'Components/scheduling/new-schedule.component';
+import LoadScheduleDialog from 'Components/scheduling/load-schedule.component';
+
+import ScheduleController from 'Controllers/schedule.controller';
 
 import { Term } from 'Models/term.model';
 
@@ -24,17 +43,17 @@ export default {
   components: {
     Classes,
     DragAndDropArea,
+    NewScheduleDialog,
+    LoadScheduleDialog,
   },
   data: () => ({
     terms: null,
     subject: null,
     course: null,
+    schedule: null,
+    newScheduleRequested: false,
+    loadScheduleRequested: false,
   }),
-  computed: {
-    ...mapGetters('schedule', {
-      schedule: 'get',
-    }),
-  },
   methods: {
     subjectSelected(payload) {
       const { course, subject } = payload;
@@ -43,6 +62,22 @@ export default {
       });
       this.course = course;
       this.subject = subject;
+    },
+    createSchedule(schedule) {
+      this.schedule = schedule;
+      this.newScheduleRequested = false;
+    },
+    loadSchedule(schedule) {
+      this.schedule = schedule;
+      console.log(this.schedule);
+      this.loadScheduleRequested = false;
+    },
+    saveSchedule() {
+      ScheduleController.update(this.schedule.id, this.schedule).then(() => {
+        this.$alert.success('Schedule successfully saved!');
+      }).catch(() => {
+        this.$alert.error('Save failed!');
+      });
     },
   },
 };

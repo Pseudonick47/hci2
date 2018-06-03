@@ -1,21 +1,26 @@
-import { ScheduleModel } from 'Models/schedule.model';
+import { Schedule } from 'Models/schedule.model';
 
 const namespaced = true;
 
 const state = {
-  schedule: null,
+  schedules: null,
 };
 
 const getters = {
-  get: (state) => state.schedule,
+  all: (state) => state.schedules,
+  titles: (state) => _.map(state.schedules, [
+    'id',
+    'title',
+  ]),
+  get: (state, id) => _.find(state.schedules, { id }),
 };
 
 const mutations = {
-  set(state, schedule) {
-    state.schedule = new ScheduleModel({}, schedule);
+  set(state, schedules) {
+    state.schedules = schedules;
   },
   initialize(state, props) {
-    state.schedule = new ScheduleModel(props);
+    state.schedule = Schedule.initialize(props);
   },
 };
 

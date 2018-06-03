@@ -24,7 +24,11 @@
             </v-btn>
           </v-list-tile-action>
         </v-layout>
-        <div class="title pa-2" style="word-break: break-all;">{{ schedule.name }}</div>
+        <div
+          v-if="schedule"
+          class="title pa-2"
+          style="word-break: break-all;"
+        >{{ schedule.name }}</div>
       </v-container>
       <v-toolbar
         v-else
@@ -33,7 +37,7 @@
       >
         <v-list class="pa-0">
           <v-list-tile>
-            <v-list-tile-content>{{ schedule.name }}</v-list-tile-content>
+            <v-list-tile-content v-if="schedule">{{ schedule.name }}</v-list-tile-content>
             <v-spacer />
             <v-list-tile-action
               style="display: flex; justify-content: center; align-items: center;"
@@ -57,45 +61,28 @@
           <v-btn
             flat
             block
+            @click="requestNew"
           >New</v-btn>
           <v-btn
             flat
             block
+            @click="requestAuto"
           >Auto</v-btn>
         </v-layout>
         <v-layout row wrap>
           <v-btn
             flat
             block
+            @click="requestSave"
           >Save</v-btn>
           <v-btn
             flat
             block
+            @click="requestLoad"
           >Load</v-btn>
         </v-layout>
       </v-container>
-      <!-- <transition name="grow"> -->
-        <!-- <div> -->
-          <!-- <div v-show="options"> -->
-          <!-- <v-btn
-            flat
-            block
-          >New</v-btn>
-          <v-btn
-            flat
-            block
-          >Save</v-btn>
-          <v-btn
-            flat
-            block
-          >Load</v-btn>
-          <v-btn
-            flat
-            block
-          >Auto</v-btn>
-          <v-divider />
-        </div> -->
-      <!-- </transition> -->
+      <v-divider />
       <v-toolbar
         class="transparent"
         flat
@@ -161,10 +148,9 @@
   </v-navigation-drawer>
 </template>
 <script>
-import { mapGetters } from 'vuex';
-
 export default {
   name: 'Classes',
+  props: ['schedule'],
   data() {
     return {
       drawer: null,
@@ -175,9 +161,6 @@ export default {
     };
   },
   computed: {
-    ...mapGetters('schedule', {
-      schedule: 'get',
-    }),
     courses() {
       const courses = this.$store.getters.courses;
       const subjects = this.$store.getters.subjects;
@@ -211,6 +194,18 @@ export default {
     hideName() {
       clearTimeout(this.activeTimeout);
       this.tooltip = null;
+    },
+    requestNew() {
+      this.$emit('newSchedule');
+    },
+    requestAuto() {
+      this.$emit('autoSchedule');
+    },
+    requestSave() {
+      this.$emit('saveSchedule');
+    },
+    requestLoad() {
+      this.$emit('loadSchedule');
     },
   },
 };

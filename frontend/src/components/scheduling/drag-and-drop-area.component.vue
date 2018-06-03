@@ -8,6 +8,7 @@
           style="width: auto !important;"
         >
           <table
+            v-if="schedule"
             class="schedule-table"
             @dragenter="clearPreviousDropzones()"
           >
@@ -86,7 +87,7 @@
       </v-layout>
     </v-container>
     <v-navigation-drawer
-      v-if="course && subject"
+      v-if="course && subject && schedule"
       v-model="termDrawer"
       :mini-variant="mini"
       id="terms-drawer"
@@ -137,36 +138,12 @@
             </v-layout>
           </v-layout>
         </v-container>
-        <!-- <v-toolbar
-          v-else
-          class="transparent"
-          flat
-        >
-          <v-list class="pa-2">
-            <v-list-tile>
-              <v-list-tile-action>
-                <v-btn
-                  icon
-                  @click.native.stop="mini = true"
-                >
-                  <v-icon>chevron_right</v-icon>
-                </v-btn>
-              </v-list-tile-action>
-              <v-list-tile-content>
-                <v-list-tile-title
-                  style="word-wrap: break-word;"
-                >{{ course.label }} {{ subject.title }}</v-list-tile-title>
-                <v-list-tile-sub-title>{{ unassigned }} unassigned terms</v-list-tile-sub-title>
-              </v-list-tile-content>
-            </v-list-tile>
-          </v-list>
-        </v-toolbar> -->
         <v-divider class="mb-4"/>
         <table
           id="terms-table"
           style="overflow: scroll;"
         >
-          <template v-for="(term, i) in terms">
+          <template v-for="(term, i) in schedule.terms[course.id][subject.id]">
             <tr
               :key="i"
               py-2
@@ -213,11 +190,9 @@
   </div>
 </template>
 <script>
-import { mapGetters } from 'vuex';
-
 import { Course } from 'Models/course.model';
 import { Subject } from 'Models/subject.model';
-import { Term } from 'Models/term.model';
+import { Schedule } from 'Models/schedule.model';
 
 // eslint-disable-next-line
 const panzoom = require('panzoom');
@@ -235,6 +210,11 @@ export default {
       required: false,
       default: () => null,
     },
+    schedule: {
+      type: Schedule,
+      required: false,
+      default: () => null,
+    },
   },
   data: () => ({
     termDrawer: true,
@@ -246,39 +226,16 @@ export default {
     },
   }),
   computed: {
-    ...mapGetters('schedule', {
-      schedule: 'get',
-    }),
     unassigned() {
-      return _.filter(this.subject.terms[this.course.id], { assigned: false }).length;
-    },
-    terms() {
-      if (!this.subject) {
-        return [];
-      }
-      return _.map(this.subject.terms[this.course.id], (t) => {
-        if (!t.assigned) {
-          return new Term({ ...t, course: this.course, subject: this.subject });
-        }
-        return {
-          row: null,
-          col: null,
-          visible: true,
-          active: true,
-          colspan: 1,
-          rowspan: Math.ceil(this.subject.duration / 15),
-          dropzone: false,
-          changeable: true,
-          dropeffect: 'none',
-          draggable: false,
-          grabbed: false,
-        };
-      });
+      return _.filter(this.schedule.terms[this.course.id][this.subject.id], { assigned: false }).length;
     },
   },
   watch: {
+    schedule() {
+      this.disableCells();
+    },
     subject() {
-      // this.disableCells();
+      this.disableCells();
     },
   },
   mounted() {
@@ -420,9 +377,10 @@ export default {
       }
 
       const item = this.dnd.item;
+      item.assigned = true;
 
       if (this.dnd.origin === 'terms') {
-        this.terms[item.row] = {
+        this.schedule.terms[this.course.id][this.subject.id][item.row] = {
           row: item.row,
           visible: true,
           active: true,
@@ -433,6 +391,7 @@ export default {
           dropzone: false,
           grabbed: false,
           changeable: true,
+          assigned: true,
         };
 
         item.row = cell.row;
@@ -457,8 +416,6 @@ export default {
         this.schedule.cells[itemCopy.row][itemCopy.col] = cell;
       }
 
-      const term = _.find(item.subject.terms[item.course.id], { id: item.id });
-      term.assigned = true;
 
       this.dnd.item = null;
       this.dnd.origin = null;
@@ -471,9 +428,10 @@ export default {
       }
 
       const item = this.dnd.item;
+      item.assigned = false;
 
       if (this.dnd.origin === 'terms') {
-        this.terms.splice(item.row, 1, {
+        this.schedule.terms[this.course.id][this.subject.id].splice(item.row, 1, {
           row: item.row,
           visible: true,
           active: true,
@@ -484,11 +442,12 @@ export default {
           dropzone: false,
           grabbed: false,
           changeable: true,
+          assigned: false,
         });
 
         item.row = cell.row;
 
-        this.terms.splice(cell.row, 1, item);
+        this.schedule.terms[this.course.id][this.subject.id].splice(cell.row, 1, item);
       } else {
         _.times(this.dnd.item.rowspan - 1, (i) => {
           this.schedule.cells[item.row + i + 1][item.col].visible = true;
@@ -499,7 +458,7 @@ export default {
         item.row = cell.row;
         item.col = null;
 
-        this.terms.splice(cell.row, 1, item);
+        this.schedule.terms[this.course.id][this.subject.id].splice(cell.row, 1, item);
 
         this.schedule.cells[itemCopy.row].splice(itemCopy.col, 1, {
           row: itemCopy.row,
@@ -515,9 +474,6 @@ export default {
           grabbed: false,
         });
       }
-
-      const term = _.find(item.subject.terms[item.course.id], { id: item.id });
-      term.assigned = false;
 
       this.dnd.item = null;
       this.dnd.origin = null;
