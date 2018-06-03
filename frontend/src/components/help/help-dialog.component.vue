@@ -65,6 +65,8 @@
 <script>
 import Vue from 'vue';
 import { TEXTS } from './../../constants';
+import TutorialHelper from '../../helpers/tutorial.helper';
+
 export default {
   name: 'HelpDialog',
   computed: {
@@ -109,6 +111,12 @@ export default {
               { title: 'Actions', value: 'actions' },
             ],
           },
+          {
+            action: 'keyboard',
+            route: 'ntaris',
+            title: 'Tutorial',
+            items: [{ title: 'Interactive Tutorial', value: 'tutorial' }],
+          },
         ],
   }),
   created() {
@@ -119,6 +127,9 @@ export default {
     activeItem['active'] = true;
   },
   methods: {
+    startTutorial() {
+      TutorialHelper.startTutorial();
+    },
     subitemSelected(subItem, item) {
       this.selectedSubitem = subItem.value;
       item['active'] = true;

@@ -1,7 +1,7 @@
 <template>
   <v-app>
     <alert-box v-if="showAlert"/>
-    <tutorial-overlay></tutorial-overlay>
+    <tutorial-overlay v-if="showTutorialOverlay"></tutorial-overlay>
     <v-toolbar
       id="app-toolbar"
       app
@@ -14,7 +14,12 @@
       >Schedule</v-btn>
       <v-btn
         flat
+        id="button-entities"
         @click="goToEntities">Entities</v-btn>
+        <v-btn
+        flat
+        @click="startTutorial"
+      >Tutorial</v-btn>
     </v-toolbar>
     <v-content>
       <v-container
@@ -25,7 +30,6 @@
         <router-view/>
       </v-container>
     </v-content>
-    <v-footer app/>
     <help/>
   </v-app>
 </template>
@@ -35,6 +39,7 @@ import Help from 'Components/help/help-snackbar.component';
 import TutorialOverlay from 'Components/helpers/tutorial-overlay.component';
 import AuthController from 'Controllers/auth.controller';
 import AlertBox from 'Components/helpers/AlertHelper.component';
+import TutorialHelper from './helpers/tutorial.helper';
 import { mapGetters } from 'vuex';
 
 import CoursesController from 'Controllers/courses.controller';
@@ -67,6 +72,9 @@ export default {
     this.getData();
   },
   methods: {
+    startTutorial() {
+      TutorialHelper.startTutorial();
+    },
     logout() {
       AuthController.logout();
     },
@@ -121,4 +129,10 @@ html {
 #app-toolbar {
   z-index: 500;
 }
+
+.tutorial-focused {
+  position: relative;
+  z-index: 9999;
+}
+
 </style>

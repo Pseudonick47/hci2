@@ -42,7 +42,7 @@
           v-if="title!='course'"
           :items="[{name:'Linux',value:'linux'},{name:'Windows',value:'windows'}]"
           v-model="filterParams.os"
-          label="Filter by OS" 
+          label="Filter by OS"
           overflow
           item-text="name"
           item-value="value"
@@ -54,6 +54,7 @@
         </v-layout>
       </v-card-title>
     <v-data-table
+      id="arst"
       :headers="headers"
       :search="search"
       :items="filteredData"

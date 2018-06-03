@@ -8,6 +8,7 @@ const TEXTS = {
   schedule2: 'isto kao i ovo prethodno samo mnogo drugacije ali snaci ces se',
   navigation: 'ctrl 1 2 3 4 menja tab',
   actions: 'ctrl enter submituje trenutnu formu',
+  tutorial: '<v-btn flat @click="startTutorial">Start Tutorial</v-btn>',
 };
 
 const TAB_VALUES = {

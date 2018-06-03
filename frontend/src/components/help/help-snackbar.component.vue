@@ -23,7 +23,6 @@ export default {
   position: fixed;
   bottom: -10px;
   right:-10px;
-  z-index: 5999;
   padding: 40px;
   border-radius: 1990px 0px  0px 0px ;
   transition-timing-function: ease;

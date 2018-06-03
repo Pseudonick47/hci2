@@ -29,6 +29,7 @@
       <v-tab
         v-for="item in tabs"
         :key="item"
+        :id="`tab-${item}`"
       >
         {{ item }}
       </v-tab>
