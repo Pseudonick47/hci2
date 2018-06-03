@@ -17,7 +17,7 @@ const getters = {
 
 const mutations = {
   set(state, schedules) {
-    state.schedules = schedules;
+    state.schedules = _.map(schedules, (s) => new Schedule(s));
   },
   initialize(state, props) {
     state.schedule = Schedule.initialize(props);

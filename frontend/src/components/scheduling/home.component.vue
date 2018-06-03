@@ -69,7 +69,6 @@ export default {
     },
     loadSchedule(schedule) {
       this.schedule = schedule;
-      console.log(this.schedule);
       this.loadScheduleRequested = false;
     },
     saveSchedule() {
