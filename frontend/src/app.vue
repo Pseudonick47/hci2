@@ -19,10 +19,7 @@
         flat
         id="button-entities"
         @click="goToEntities">Entities</v-btn>
-        <v-btn
-        flat
-        @click="startTutorial"
-      >Tutorial</v-btn>
+      <help-dialog style="max-width: 30px; cursor: pointer;"></help-dialog>
     </v-toolbar>
     <v-content>
       <v-container
@@ -33,13 +30,12 @@
         <router-view/>
       </v-container>
     </v-content>
-    <help/>
   </v-app>
 </template>
 
 <script>
-import Help from 'Components/help/help-snackbar.component';
 import AuthController from 'Controllers/auth.controller';
+import HelpDialog from 'Components/help/help-dialog.component';
 import AlertBox from 'Components/helpers/AlertHelper.component';
 import { mapGetters } from 'vuex';
 
@@ -57,7 +53,7 @@ export default {
   },
   components: {
     'alert-box': AlertBox,
-    Help,
+    HelpDialog,
   },
   computed: {
     ...mapGetters([

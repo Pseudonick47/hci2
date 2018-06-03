@@ -3,8 +3,8 @@
     <v-dialog
       v-model="dialog"
       persistent
-      max-width="1200px"
-      style="height: 100%;"
+      max-width="1250px"
+      style="height: 100%; overflow: hidden;"
       v-shortcuts="[
         { shortcut: [ 'f1' ], callback: () => dialog = !dialog  },
       ]"
@@ -47,7 +47,11 @@
             </v-flex>
             <v-flex xs9 sm9>
               <v-card class="pa-2 ml-3">
-               <p>{{ selectedText }}</p>
+                <template v-if="selectedSubitem === 'tutorial'">
+                  <p> {{ selectedText }} </p>
+                  <v-btn @click="startTutorial">Start Tutorial</v-btn>
+                </template>
+               <p v-else v-html="selectedText"></p>
               </v-card>
             </v-flex>
           </v-layout>
@@ -118,12 +122,16 @@ export default {
           },
         ],
   }),
-  created() {
-    const activeItem = _.find(this.items, [
-      'route',
-      this.currentRouteName,
-    ]);
-    activeItem['active'] = true;
+  watch: {
+    dialog(newVal) {
+      if (newVal) {
+        const activeItem = _.find(this.items, [
+          'route',
+          this.$router.currentRoute.name,
+        ]);
+        activeItem['active'] = true;
+      }
+    },
   },
   methods: {
     startTutorial() {

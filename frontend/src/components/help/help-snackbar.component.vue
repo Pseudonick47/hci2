@@ -3,7 +3,6 @@
     class="help"
   >
     <span class="help-text">
-      <help-dialog></help-dialog>
     </span>
   </div>
 </template>

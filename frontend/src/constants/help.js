@@ -6,9 +6,13 @@ const TEXTS = {
   entities5: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
   schedule1: 'kliknes tu tamo i to je to',
   schedule2: 'isto kao i ovo prethodno samo mnogo drugacije ali snaci ces se',
-  navigation: 'ctrl 1 2 3 4 menja tab',
+  navigation: `
+    <code>ctrl 1</code> - go to course tab<br>
+    <code>ctrl 2</code> - go to classroom tab<br>
+    <code>ctrl 3</code> - go to subject tab<br>
+    <code>ctrl 4</code> - go to software tab<br>`,
   actions: 'ctrl enter submituje trenutnu formu',
-  tutorial: '<v-btn flat @click="startTutorial">Start Tutorial</v-btn>',
+  tutorial: 'Learn the basics with the interactive tutorial, just click the button bellow',
 };
 
 const TAB_VALUES = {
