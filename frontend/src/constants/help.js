@@ -11,7 +11,9 @@ const TEXTS = {
     <code>ctrl 2</code> - go to classroom tab<br>
     <code>ctrl 3</code> - go to subject tab<br>
     <code>ctrl 4</code> - go to software tab<br>`,
-  actions: 'ctrl enter submituje trenutnu formu',
+  actions: `
+    <code>ctrl + enter</code> - submit current form<br>
+    <code>F1</code> - open help dialog`,
   tutorial: 'Learn the basics with the interactive tutorial, just click the button bellow',
 };
 
