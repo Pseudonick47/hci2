@@ -46,6 +46,7 @@ import CoursesController from 'Controllers/courses.controller';
 import SubjectsController from 'Controllers/subjects.controller';
 import ClassroomsController from 'Controllers/classrooms.controller';
 import SoftwareController from 'Controllers/software.controller';
+import ScheduleController from 'Controllers/schedule.controller';
 
 export default {
   name: 'App',
@@ -96,6 +97,9 @@ export default {
       });
       SoftwareController.list().then(({ data }) => {
         this.$store.commit('setSoftwares', data);
+      });
+      ScheduleController.list().then(({ data }) => {
+        this.$store.commit('schedule/set', data);
       });
     },
   },

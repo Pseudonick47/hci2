@@ -1,18 +1,26 @@
-import { TableModel } from 'Models/table.model';
+import { Schedule } from 'Models/schedule.model';
 
 const namespaced = true;
 
 const state = {
-  schedule: TableModel.testModel(),
+  schedules: null,
 };
 
 const getters = {
-  get: (state) => state.schedule,
+  all: (state) => state.schedules,
+  titles: (state) => _.map(state.schedules, [
+    'id',
+    'title',
+  ]),
+  get: (state, id) => _.find(state.schedules, { id }),
 };
 
 const mutations = {
-  set(state, schedule) {
-    state.schedule = new TableModel(schedule);
+  set(state, schedules) {
+    state.schedules = _.map(schedules, (s) => new Schedule(s));
+  },
+  initialize(state, props) {
+    state.schedule = Schedule.initialize(props);
   },
 };
 

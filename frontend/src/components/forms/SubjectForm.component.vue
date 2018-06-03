@@ -231,6 +231,17 @@ export default {
     submit () {
       this.$validator.validateAll().then((result) => {
         if (result) {
+          this.subject.terms = {};
+          _.each(this.subject.course, (course) => {
+            this.subject.terms[course] = _.times(this.subject.lessons, (i) => ({
+              id: i,
+              assigned: false,
+              row: null,
+              col: null,
+              rowspan: Math.ceil(this.subject.duration / 15),
+            }));
+          });
+
           if (this.editOrCreate === 'create') {
             // this.$emit('clicked');
             SubjectsController.create(this.subject).then(({ data }) => {
