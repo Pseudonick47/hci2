@@ -1,113 +1,163 @@
 <template>
   <v-navigation-drawer
     v-model="drawer"
+    :mini-variant="mini"
+    :class="{ 'mini-drawer': mini }"
     id="classes-drawer"
     left
   >
-    <v-toolbar
-      class="transparent"
-      flat
-    >
-      <v-list class="pa-0">
-        <v-list-tile>
-          <v-list-tile-content>
-            {{ schedule.name }}
-          </v-list-tile-content>
-          <v-list-tile-action pr-1>
+    <div id="classes-drawer--content">
+      <v-container
+        v-if="mini"
+        class="px-1 py-3 mb-2 mt-3"
+      >
+        <v-layout
+          class="mb-4"
+          justify-center
+        >
+          <v-list-tile-action>
             <v-btn
               icon
-              small
-              @click="options = !options"
+              @click.native.stop="mini = false"
             >
-              <v-icon>settings</v-icon>
+              <v-icon>chevron_right</v-icon>
             </v-btn>
           </v-list-tile-action>
-        </v-list-tile>
-      </v-list>
-    </v-toolbar>
-    <v-divider />
-    <transition name="grow">
-      <div v-show="options">
-        <v-btn
-          flat
-          block
-        >New</v-btn>
-        <v-btn
-          flat
-          block
-        >Save</v-btn>
-        <v-btn
-          flat
-          block
-        >Load</v-btn>
-        <v-btn
-          flat
-          block
-        >Auto</v-btn>
-        <v-divider />
-      </div>
-    </transition>
-    <v-toolbar
-      class="transparent"
-      flat
-    >
-      <v-list class="pa-0">
-        <v-list-tile>
-          <v-list-tile-avatar>
-            Classes
-          </v-list-tile-avatar>
-          <v-list-tile-content>
-          </v-list-tile-content>
-        </v-list-tile>
-      </v-list>
-    </v-toolbar>
-    <v-list
-      class="pt-0"
-      dense
-    >
-      <v-divider />
-      <v-list-group
-        v-for="course in courses"
-        :key="course.id"
+        </v-layout>
+        <div class="title pa-2" style="word-break: break-all;">{{ schedule.name }}</div>
+      </v-container>
+      <v-toolbar
+        v-else
+        flat
+        class="transparent"
       >
-        <v-list-tile
-          slot="activator"
+        <v-list class="pa-0">
+          <v-list-tile>
+            <v-list-tile-content>{{ schedule.name }}</v-list-tile-content>
+            <v-spacer />
+            <v-list-tile-action
+              style="display: flex; justify-content: center; align-items: center;"
+            >
+              <v-btn
+                icon
+                @click.native.stop="mini = true"
+              >
+                <v-icon>chevron_left</v-icon>
+              </v-btn>
+            </v-list-tile-action>
+          </v-list-tile>
+        </v-list>
+      </v-toolbar>
+      <v-divider />
+      <v-container pa-0>
+        <v-layout
+          row
+          wrap
         >
-          <div class="body-2 mr-3">{{ course.label }}</div>
-          <v-list-tile-content
-            @mouseenter="displayName(course.title, $event)"
-            @mouseleave="hideName"
-            @click="hideName"
-          >
-            <v-list-tile-title>{{ clip(course.title, 27) }}</v-list-tile-title>
-          </v-list-tile-content>
-        </v-list-tile>
-        <v-list-tile
-          v-for="subject in course.subjects"
-          :key="subject.id"
-          class="pl-3"
-          @click="selected(course, subject)"
+          <v-btn
+            flat
+            block
+          >New</v-btn>
+          <v-btn
+            flat
+            block
+          >Auto</v-btn>
+        </v-layout>
+        <v-layout row wrap>
+          <v-btn
+            flat
+            block
+          >Save</v-btn>
+          <v-btn
+            flat
+            block
+          >Load</v-btn>
+        </v-layout>
+      </v-container>
+      <!-- <transition name="grow"> -->
+        <!-- <div> -->
+          <!-- <div v-show="options"> -->
+          <!-- <v-btn
+            flat
+            block
+          >New</v-btn>
+          <v-btn
+            flat
+            block
+          >Save</v-btn>
+          <v-btn
+            flat
+            block
+          >Load</v-btn>
+          <v-btn
+            flat
+            block
+          >Auto</v-btn>
+          <v-divider />
+        </div> -->
+      <!-- </transition> -->
+      <v-toolbar
+        class="transparent"
+        flat
+      >
+        <v-list class="pa-0">
+          <v-list-tile>
+            <v-list-tile-avatar>
+              Subjects
+            </v-list-tile-avatar>
+            <v-list-tile-content>
+            </v-list-tile-content>
+          </v-list-tile>
+        </v-list>
+      </v-toolbar>
+      <v-list
+        class="pt-0"
+        dense
+      >
+        <v-divider />
+        <v-list-group
+          v-for="course in courses"
+          :key="course.id"
         >
-          <div class="body-2 mr-3">{{ subject.label }}</div>
-          <v-list-tile-content
-            @mouseenter="displayName(subject.title, $event)"
-            @mouseleave="hideName"
-            @click="hideName"
+          <v-list-tile
+            slot="activator"
           >
-            <v-list-tile-title>{{ clip(subject.title, 33) }}</v-list-tile-title>
-          </v-list-tile-content>
-        </v-list-tile>
-      </v-list-group>
-    </v-list>
-    <v-tooltip
-      v-if="tooltip"
-      :position-x="tooltip.x"
-      :position-y="tooltip.y"
-      :value="true"
-      right
-    >
-      <span> {{ tooltip.text }} </span>
-    </v-tooltip>
+            <div class="body-2 mr-3">{{ course.label }}</div>
+            <v-list-tile-content
+              @mouseenter="displayName(course.title, $event)"
+              @mouseleave="hideName"
+              @click="hideName"
+            >
+              <v-list-tile-title>{{ clip(course.title, 27) }}</v-list-tile-title>
+            </v-list-tile-content>
+          </v-list-tile>
+          <v-list-tile
+            v-for="subject in course.subjects"
+            :key="subject.id"
+            class="pl-3"
+            @click="selected(course, subject)"
+          >
+            <div class="body-2 mr-3">{{ subject.label }}</div>
+            <v-list-tile-content
+              @mouseenter="displayName(subject.title, $event)"
+              @mouseleave="hideName"
+              @click="hideName"
+            >
+              <v-list-tile-title>{{ clip(subject.title, 33) }}</v-list-tile-title>
+            </v-list-tile-content>
+          </v-list-tile>
+        </v-list-group>
+      </v-list>
+      <v-tooltip
+        v-if="tooltip"
+        :position-x="tooltip.x"
+        :position-y="tooltip.y"
+        :value="true"
+        right
+      >
+        <span> {{ tooltip.text }} </span>
+      </v-tooltip>
+    </div>
   </v-navigation-drawer>
 </template>
 <script>
@@ -121,6 +171,7 @@ export default {
       options: false,
       courseTileState: null,
       tooltip: null,
+      mini: false,
     };
   },
   computed: {
@@ -177,10 +228,22 @@ export default {
   opacity: 0;
 }
 
+.mini-drawer {
+  direction: rtl;
+  width: 100px !important;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
 #classes-drawer {
   position: fixed;
   left: 0;
   top: 64px;
   height: 100%;
 }
+
+#classes-drawer--content {
+  direction: initial;
+}
+
 </style>

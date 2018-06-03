@@ -39,12 +39,11 @@ export default {
     subjectSelected(payload) {
       const { course, subject } = payload;
       this.terms = _.map(subject.terms[course.id], (t) => {
-        return !t.assinged ? new Term({ ...t, course, subject}) : null;
+        return !t.assinged ? new Term({ ...t, course, subject }) : null;
       });
       this.course = course;
       this.subject = subject;
-      console.log(this.terms);
-    }
+    },
   },
 };
 </script>

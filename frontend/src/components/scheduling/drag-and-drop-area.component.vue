@@ -59,6 +59,7 @@
                   'schedule-cell': cell.active,
                   'schedule-inactive-cell': !cell.active,
                   'item-dropzone-area': cell.dropzone,
+                  'disabled-cell': cell.disabled,
                 }"
                 :aria-dropeffect="cell.dropeffect"
                 :aria-grabbed="cell.grabbed"
@@ -87,30 +88,83 @@
     <v-navigation-drawer
       v-if="course && subject"
       v-model="termDrawer"
-      class="pt-3"
+      :mini-variant="mini"
       id="terms-drawer"
       right
+      style="overflow-y: scroll; overflow-x: hidden;"
     >
       <v-layout
         column
         align-center
       >
-        <v-toolbar
+        <v-container
+          v-if="mini"
+          class="px-1 py-3 mb-2 mt-3"
+        >
+          <v-layout
+            class="mb-4"
+            justify-center
+          >
+            <v-list-tile-action>
+              <v-btn
+                icon
+                @click.native.stop="mini = false"
+              >
+                <v-icon>chevron_left</v-icon>
+              </v-btn>
+            </v-list-tile-action>
+          </v-layout>
+          <div class="title text-xs-center mb-2">{{ course.label }}</div>
+          <div class="title text-xs-center mb-2">{{ subject.label }}</div>
+          <div class="subheading text-xs-center mb-3">{{ unassigned }}</div>
+        </v-container>
+        <v-container
+          v-else
+          class="pl-4 pr-2 pt-4 pb-2"
+        >
+          <v-layout align-center>
+            <v-list-tile-action>
+              <v-btn
+                icon
+                @click.native.stop="mini = true"
+              >
+                <v-icon>chevron_right</v-icon>
+              </v-btn>
+            </v-list-tile-action>
+            <v-layout row wrap>
+              <div class="title mb-2">{{ course.label }} {{ subject.title }}</div>
+              <div class="subheading">{{ unassigned }} unassigned terms</div>
+            </v-layout>
+          </v-layout>
+        </v-container>
+        <!-- <v-toolbar
+          v-else
           class="transparent"
           flat
         >
           <v-list class="pa-2">
             <v-list-tile>
+              <v-list-tile-action>
+                <v-btn
+                  icon
+                  @click.native.stop="mini = true"
+                >
+                  <v-icon>chevron_right</v-icon>
+                </v-btn>
+              </v-list-tile-action>
               <v-list-tile-content>
-                <v-list-tile-title>{{ course.label }} {{ subject.title }}</v-list-tile-title>
+                <v-list-tile-title
+                  style="word-wrap: break-word;"
+                >{{ course.label }} {{ subject.title }}</v-list-tile-title>
                 <v-list-tile-sub-title>{{ unassigned }} unassigned terms</v-list-tile-sub-title>
               </v-list-tile-content>
             </v-list-tile>
           </v-list>
-        </v-toolbar>
+        </v-toolbar> -->
         <v-divider class="mb-4"/>
         <table
           id="terms-table"
+          style="overflow: scroll;"
         >
           <template v-for="(term, i) in terms">
             <tr
@@ -184,6 +238,7 @@ export default {
   },
   data: () => ({
     termDrawer: true,
+    mini: false,
     dnd: {
       origin: null,
       target: null,
@@ -204,23 +259,27 @@ export default {
       return _.map(this.subject.terms[this.course.id], (t) => {
         if (!t.assigned) {
           return new Term({ ...t, course: this.course, subject: this.subject });
-        } else {
-          return {
-            row: null,
-            col: null,
-            visible: true,
-            active: true,
-            colspan: 1,
-            rowspan: Math.ceil(this.subject.duration / 15),
-            dropzone: false,
-            changeable: true,
-            dropeffect: 'none',
-            draggable: false,
-            grabbed: false,
-          };
         }
+        return {
+          row: null,
+          col: null,
+          visible: true,
+          active: true,
+          colspan: 1,
+          rowspan: Math.ceil(this.subject.duration / 15),
+          dropzone: false,
+          changeable: true,
+          dropeffect: 'none',
+          draggable: false,
+          grabbed: false,
+        };
       });
-    }
+    },
+  },
+  watch: {
+    subject() {
+      // this.disableCells();
+    },
   },
   mounted() {
     const area = document.getElementById('area-container');
@@ -243,14 +302,12 @@ export default {
         return;
       }
 
-      console.log(cell, this.course, this.subject);
       if (origin === 'schedule' &&
           (cell.course.id !== this.course.id ||
           cell.subject.id !== this.subject.id)) {
-            console.log('here');
             this.$emit('changeSubject', {
               course: cell.course,
-              subject: cell.subject
+              subject: cell.subject,
             });
           }
 
@@ -295,7 +352,7 @@ export default {
       this.dnd.previousDropzones = this.dnd.dropzones;
       this.dnd.dropzones = [];
 
-      if (!cell.changeable) {
+      if (!cell.changeable || cell.disabled) {
         return;
       }
 
@@ -338,7 +395,7 @@ export default {
       }
     },
     onScheduleDrop(event, cell) {
-      if (!cell.changeable) {
+      if (!cell.changeable || cell.disabled) {
         return;
       }
 
@@ -467,6 +524,68 @@ export default {
 
       event.preventDefault();
     },
+    disableCells() {
+      const labs = this.$store.getters.classrooms;
+
+      const toDisable = _.filter(labs, (lab) => {
+        if (this.subject.board === 'yes' && lab.board === 'no') {
+          return true;
+        }
+
+        if (this.subject.smartBoard === 'yes' && lab.smartBoard === 'no') {
+          return true;
+        }
+
+        if (this.subject.projector === 'yes' && lab.projector === 'no') {
+          return true;
+        }
+
+        if (this.subject.groupSize > lab.capacity) {
+          return true;
+        }
+
+        let ok = true;
+        _.each(this.subject.os, (os) => {
+          if (_.find(lab.os, (los) => los === os)) {
+            ok = false;
+          }
+        });
+
+        if (!ok) {
+          return true;
+        }
+
+        ok = true;
+        _.each(this.subject.software, (s) => {
+          if (_.find(lab.software, (ls) => ls.id === s.id)) {
+            ok = false;
+          }
+        });
+
+        if (!ok) {
+          return true;
+        }
+
+        return false;
+      });
+
+      const indecies = [];
+      _.each(toDisable, (lab) => {
+        _.each(this.schedule.headers, (header, i) => {
+          const index = _.findIndex(header.subheaders, (s) => s.text === lab.label);
+          // eslint-disable-next-line
+          indecies.push(i * header.subheaders.length + index);
+        });
+      });
+
+      _.each(this.schedule.cells, (row) => _.each(row, (cell) => {
+        cell.disabled = false;
+      }));
+
+      _.each(this.schedule.cells, (row) => _.each(indecies, (index) => {
+        row[index].disabled = true;
+      }));
+    },
   },
 };
 </script>
@@ -552,6 +671,10 @@ export default {
 .terms-row {
   height: 30px;
   max-height: 30px;
+}
+
+.disabled-cell {
+  background-color: #838383 !important;
 }
 
 .my-vertical-text {

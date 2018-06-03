@@ -227,9 +227,6 @@ export default {
     entity: '',
     dialog: false,
   }),
-  beforeMount() {
-    console.log(this.subject);
-  },
   methods: {
     submit () {
       this.$validator.validateAll().then((result) => {
