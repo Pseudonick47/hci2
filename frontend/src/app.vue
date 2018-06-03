@@ -1,6 +1,7 @@
 <template>
   <v-app>
     <alert-box v-if="showAlert"/>
+    <tutorial-overlay></tutorial-overlay>
     <v-toolbar
       id="app-toolbar"
       app
@@ -31,6 +32,7 @@
 
 <script>
 import Help from 'Components/help/help-snackbar.component';
+import TutorialOverlay from 'Components/helpers/tutorial-overlay.component';
 import AuthController from 'Controllers/auth.controller';
 import AlertBox from 'Components/helpers/AlertHelper.component';
 import { mapGetters } from 'vuex';
@@ -49,6 +51,7 @@ export default {
   components: {
     'alert-box': AlertBox,
     Help,
+    TutorialOverlay,
   },
   computed: {
     ...mapGetters([
@@ -57,6 +60,7 @@ export default {
       'isLogged',
       'activeUserRole',
       'showAlert',
+      'showTutorialOverlay',
     ]),
   },
   beforeMount() {
