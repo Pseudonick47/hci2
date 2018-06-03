@@ -54,7 +54,7 @@
         </v-layout>
       </v-card-title>
     <v-data-table
-      id="arst"
+      v-intro="'The content of tooltip'"
       :headers="headers"
       :search="search"
       :items="filteredData"

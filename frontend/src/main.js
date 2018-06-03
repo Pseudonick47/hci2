@@ -4,16 +4,21 @@ import router from './router';
 import store from './store';
 import Vuetify from 'vuetify';
 import Axios from 'axios';
-import 'vuetify/dist/vuetify.min.css';
 import Config from './config';
 import VeeValidate from 'vee-validate';
 import AlertHelper from './helpers/alert-helper';
 import VueShortcuts from 'vue-shortcuts';
+import VueIntro from 'vue-introjs';
 
 // eslint-disable-next-line
 import * as _ from 'lodash';
+
+import 'vuetify/dist/vuetify.min.css';
+import 'intro.js/introjs.css';
+
 Vue.config.productionTip = false;
 
+Vue.use(VueIntro);
 Vue.use(Vuetify);
 Vue.use(VueShortcuts);
 Vue.prototype.router = router;
