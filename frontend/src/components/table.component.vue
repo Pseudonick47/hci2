@@ -54,7 +54,10 @@
         </v-layout>
       </v-card-title>
     <v-data-table
-      v-intro="'The content of tooltip'"
+      v-intro="'If everything went well, we can see the Course we created in the table'"
+      v-intro-if="title == 'course'"
+      v-intro-step="9"
+      v-intro-scroll-to="'element'"
       :headers="headers"
       :search="search"
       :items="filteredData"

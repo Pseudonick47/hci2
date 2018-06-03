@@ -3,11 +3,9 @@ const state = {
   alertMessage: '',
   alertColor: 'primary',
   alertIcon: '',
-  showTutorialOverlay: false,
 };
 
 const getters = {
-  showTutorialOverlay: (state) => state.showTutorialOverlay,
   alertIcon: (state) => state.alertIcon,
   alertColor: (state) => state.alertColor,
   alertMessage: (state) => state.alertMessage,
@@ -15,9 +13,6 @@ const getters = {
 };
 
 const mutations = {
-  setTutorialOverlay(state, newState) {
-    state.showTutorialOverlay = newState;
-  },
   success(state, message) {
     state.alertIcon = 'check_circle';
     state.alertColor = 'grey';

@@ -1,7 +1,6 @@
 <template>
   <v-app>
     <alert-box v-if="showAlert"/>
-    <tutorial-overlay v-if="showTutorialOverlay"></tutorial-overlay>
     <v-toolbar
       id="app-toolbar"
       app
@@ -9,10 +8,14 @@
       <v-toolbar-title>CS Laboratories</v-toolbar-title>
       <v-spacer/>
       <v-btn
+        v-intro="'Click here to see the schedule'"
+        v-intro-step="1"
         flat
         @click="goToSchedule"
       >Schedule</v-btn>
       <v-btn
+        v-intro="'Click here to add new software, courses, subjects and classrooms'"
+        v-intro-step="2"
         flat
         id="button-entities"
         @click="goToEntities">Entities</v-btn>
@@ -36,10 +39,8 @@
 
 <script>
 import Help from 'Components/help/help-snackbar.component';
-import TutorialOverlay from 'Components/helpers/tutorial-overlay.component';
 import AuthController from 'Controllers/auth.controller';
 import AlertBox from 'Components/helpers/AlertHelper.component';
-import TutorialHelper from './helpers/tutorial.helper';
 import { mapGetters } from 'vuex';
 
 import CoursesController from 'Controllers/courses.controller';
@@ -57,7 +58,6 @@ export default {
   components: {
     'alert-box': AlertBox,
     Help,
-    TutorialOverlay,
   },
   computed: {
     ...mapGetters([
@@ -66,7 +66,6 @@ export default {
       'isLogged',
       'activeUserRole',
       'showAlert',
-      'showTutorialOverlay',
     ]),
   },
   beforeMount() {
@@ -74,7 +73,10 @@ export default {
   },
   methods: {
     startTutorial() {
-      TutorialHelper.startTutorial();
+      this.$router.push({ name: 'entities' });
+      this.$nextTick(() => {
+        this.$intro().start();
+      });
     },
     logout() {
       AuthController.logout();

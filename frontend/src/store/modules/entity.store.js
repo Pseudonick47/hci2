@@ -6,9 +6,9 @@ import { Course } from 'Models/course.model';
 
 const state = {
   tabs: [
+    'course',
     'classroom',
     'subject',
-    'course',
     'software',
   ],
   headers: {

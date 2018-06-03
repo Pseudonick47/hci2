@@ -65,7 +65,6 @@
 <script>
 import Vue from 'vue';
 import { TEXTS } from './../../constants';
-import TutorialHelper from '../../helpers/tutorial.helper';
 
 export default {
   name: 'HelpDialog',
@@ -128,7 +127,11 @@ export default {
   },
   methods: {
     startTutorial() {
-      TutorialHelper.startTutorial();
+      this.dialog = false;
+      this.$router.push({ name: 'entities' });
+      this.$nextTick(() => {
+        this.$intro().start();
+      });
     },
     subitemSelected(subItem, item) {
       this.selectedSubitem = subItem.value;
