@@ -8,6 +8,7 @@
           style="width: auto !important;"
         >
           <table
+            v-if="schedule"
             class="schedule-table"
             @dragenter="clearPreviousDropzones()"
           >
@@ -59,6 +60,7 @@
                   'schedule-cell': cell.active,
                   'schedule-inactive-cell': !cell.active,
                   'item-dropzone-area': cell.dropzone,
+                  'disabled-cell': cell.disabled,
                 }"
                 :aria-dropeffect="cell.dropeffect"
                 :aria-grabbed="cell.grabbed"
@@ -72,12 +74,10 @@
                 @drop="onScheduleDrop($event, cell)"
               >
                 <v-card
-                  v-if="cell.text"
-                  class="term-card"
+                  v-if="cell.draggable"
+                  class="term-card elevation-3"
                 >
-                  <div class="title">
-                    {{ cell.text }}
-                  </div>
+                  <div class="title my-vertical-text">{{ cell.course.label }} {{ cell.subject.label }}</div>
                 </v-card>
               </td>
             </tr>
@@ -87,33 +87,63 @@
       </v-layout>
     </v-container>
     <v-navigation-drawer
+      v-if="course && subject && schedule"
       v-model="termDrawer"
-      class="pt-3"
+      :mini-variant="mini"
       id="terms-drawer"
       right
+      style="overflow-y: scroll; overflow-x: hidden;"
     >
       <v-layout
         column
         align-center
       >
-        <v-toolbar
-          class="transparent"
-          flat
+        <v-container
+          v-if="mini"
+          class="px-1 py-3 mb-2 mt-3"
         >
-          <v-list class="pa-2">
-            <v-list-tile>
-              <v-list-tile-content>
-                <v-list-tile-title>HCI</v-list-tile-title>
-                <v-list-tile-sub-title>3 unassigned terms</v-list-tile-sub-title>
-              </v-list-tile-content>
-            </v-list-tile>
-          </v-list>
-        </v-toolbar>
+          <v-layout
+            class="mb-4"
+            justify-center
+          >
+            <v-list-tile-action>
+              <v-btn
+                icon
+                @click.native.stop="mini = false"
+              >
+                <v-icon>chevron_left</v-icon>
+              </v-btn>
+            </v-list-tile-action>
+          </v-layout>
+          <div class="title text-xs-center mb-2">{{ course.label }}</div>
+          <div class="title text-xs-center mb-2">{{ subject.label }}</div>
+          <div class="subheading text-xs-center mb-3">{{ unassigned }}</div>
+        </v-container>
+        <v-container
+          v-else
+          class="pl-4 pr-2 pt-4 pb-2"
+        >
+          <v-layout align-center>
+            <v-list-tile-action>
+              <v-btn
+                icon
+                @click.native.stop="mini = true"
+              >
+                <v-icon>chevron_right</v-icon>
+              </v-btn>
+            </v-list-tile-action>
+            <v-layout row wrap>
+              <div class="title mb-2">{{ course.label }} {{ subject.title }}</div>
+              <div class="subheading">{{ unassigned }} unassigned terms</div>
+            </v-layout>
+          </v-layout>
+        </v-container>
         <v-divider class="mb-4"/>
         <table
           id="terms-table"
+          style="overflow: scroll;"
         >
-          <template v-for="(term, i) in terms">
+          <template v-for="(term, i) in schedule.terms[course.id][subject.id]">
             <tr
               :key="i"
               py-2
@@ -139,10 +169,10 @@
                 @drop="onTermsDrop($event, term)"
               >
                 <v-card
-                  v-if="term.text"
+                  v-if="term.draggable"
                   class="term-card elevation-3"
                 >
-                  <div class="title my-vertical-text">{{ term.text }}</div>
+                  <div class="title my-vertical-text">{{ term.course.label }} {{ term.subject.label }}</div>
                 </v-card>
               </td>
             </tr>
@@ -160,56 +190,35 @@
   </div>
 </template>
 <script>
-import { mapGetters } from 'vuex';
+import { Course } from 'Models/course.model';
+import { Subject } from 'Models/subject.model';
+import { Schedule } from 'Models/schedule.model';
 
 // eslint-disable-next-line
 const panzoom = require('panzoom');
 
 export default {
-  name: 'DragAndDropArea2',
+  name: 'DragAndDropArea',
+  props: {
+    course: {
+      type: Course,
+      required: false,
+      default: () => null,
+    },
+    subject: {
+      type: Subject,
+      required: false,
+      default: () => null,
+    },
+    schedule: {
+      type: Schedule,
+      required: false,
+      default: () => null,
+    },
+  },
   data: () => ({
     termDrawer: true,
-    terms: [
-      {
-        id: 1,
-        row: 0,
-        visible: true,
-        active: true,
-        colspan: 1,
-        rowspan: 3,
-        dropeffect: 'none',
-        draggable: true,
-        grabbed: false,
-        changeable: false,
-        text: 'HCI',
-      },
-      {
-        id: 2,
-        row: 1,
-        visible: true,
-        active: true,
-        colspan: 1,
-        rowspan: 3,
-        dropeffect: 'none',
-        draggable: true,
-        grabbed: false,
-        changeable: false,
-        text: 'HCI',
-      },
-      {
-        id: 3,
-        row: 2,
-        visible: true,
-        active: true,
-        colspan: 1,
-        rowspan: 3,
-        dropeffect: 'none',
-        draggable: true,
-        grabbed: false,
-        changeable: false,
-        text: 'HCI',
-      },
-    ],
+    mini: false,
     dnd: {
       origin: null,
       target: null,
@@ -217,9 +226,17 @@ export default {
     },
   }),
   computed: {
-    ...mapGetters('schedule', {
-      schedule: 'get',
-    }),
+    unassigned() {
+      return _.filter(this.schedule.terms[this.course.id][this.subject.id], { assigned: false }).length;
+    },
+  },
+  watch: {
+    schedule() {
+      this.disableCells();
+    },
+    subject() {
+      this.disableCells();
+    },
   },
   mounted() {
     const area = document.getElementById('area-container');
@@ -241,6 +258,16 @@ export default {
         }
         return;
       }
+
+      if (origin === 'schedule' &&
+          (cell.course.id !== this.course.id ||
+          cell.subject.id !== this.subject.id)) {
+            this.$emit('changeSubject', {
+              course: cell.course,
+              subject: cell.subject,
+            });
+          }
+
       cell.grabbed = true;
       this.dnd.item = cell;
       this.dnd.origin = origin;
@@ -270,6 +297,7 @@ export default {
     onDragstart(event, cell) {
       event.dataTransfer.setData('text', '');
       this.dnd.item = cell;
+      this.dnd.drop = false;
     },
     onDragend() {
       this.clearPreviousDropzones();
@@ -281,7 +309,7 @@ export default {
       this.dnd.previousDropzones = this.dnd.dropzones;
       this.dnd.dropzones = [];
 
-      if (!cell.changeable) {
+      if (!cell.changeable || cell.disabled) {
         return;
       }
 
@@ -319,10 +347,12 @@ export default {
       }
     },
     onDragleave() {
-      this.clearPreviousDropzones();
+      if (this.dnd.previousDropzones) {
+        this.clearPreviousDropzones();
+      }
     },
     onScheduleDrop(event, cell) {
-      if (!cell.changeable) {
+      if (!cell.changeable || cell.disabled) {
         return;
       }
 
@@ -347,9 +377,10 @@ export default {
       }
 
       const item = this.dnd.item;
+      item.assigned = true;
 
       if (this.dnd.origin === 'terms') {
-        this.terms[item.row] = {
+        this.schedule.terms[this.course.id][this.subject.id][item.row] = {
           row: item.row,
           visible: true,
           active: true,
@@ -360,6 +391,7 @@ export default {
           dropzone: false,
           grabbed: false,
           changeable: true,
+          assigned: true,
         };
 
         item.row = cell.row;
@@ -384,6 +416,7 @@ export default {
         this.schedule.cells[itemCopy.row][itemCopy.col] = cell;
       }
 
+
       this.dnd.item = null;
       this.dnd.origin = null;
 
@@ -395,9 +428,10 @@ export default {
       }
 
       const item = this.dnd.item;
+      item.assigned = false;
 
       if (this.dnd.origin === 'terms') {
-        this.terms.splice(item.row, 1, {
+        this.schedule.terms[this.course.id][this.subject.id].splice(item.row, 1, {
           row: item.row,
           visible: true,
           active: true,
@@ -408,11 +442,12 @@ export default {
           dropzone: false,
           grabbed: false,
           changeable: true,
+          assigned: false,
         });
 
         item.row = cell.row;
 
-        this.terms.splice(cell.row, 1, item);
+        this.schedule.terms[this.course.id][this.subject.id].splice(cell.row, 1, item);
       } else {
         _.times(this.dnd.item.rowspan - 1, (i) => {
           this.schedule.cells[item.row + i + 1][item.col].visible = true;
@@ -423,7 +458,7 @@ export default {
         item.row = cell.row;
         item.col = null;
 
-        this.terms.splice(cell.row, 1, item);
+        this.schedule.terms[this.course.id][this.subject.id].splice(cell.row, 1, item);
 
         this.schedule.cells[itemCopy.row].splice(itemCopy.col, 1, {
           row: itemCopy.row,
@@ -445,6 +480,68 @@ export default {
 
       event.preventDefault();
     },
+    disableCells() {
+      const labs = this.$store.getters.classrooms;
+
+      const toDisable = _.filter(labs, (lab) => {
+        if (this.subject.board === 'yes' && lab.board === 'no') {
+          return true;
+        }
+
+        if (this.subject.smartBoard === 'yes' && lab.smartBoard === 'no') {
+          return true;
+        }
+
+        if (this.subject.projector === 'yes' && lab.projector === 'no') {
+          return true;
+        }
+
+        if (this.subject.groupSize > lab.capacity) {
+          return true;
+        }
+
+        let ok = true;
+        _.each(this.subject.os, (os) => {
+          if (_.find(lab.os, (los) => los === os)) {
+            ok = false;
+          }
+        });
+
+        if (!ok) {
+          return true;
+        }
+
+        ok = true;
+        _.each(this.subject.software, (s) => {
+          if (_.find(lab.software, (ls) => ls.id === s.id)) {
+            ok = false;
+          }
+        });
+
+        if (!ok) {
+          return true;
+        }
+
+        return false;
+      });
+
+      const indecies = [];
+      _.each(toDisable, (lab) => {
+        _.each(this.schedule.headers, (header, i) => {
+          const index = _.findIndex(header.subheaders, (s) => s.text === lab.label);
+          // eslint-disable-next-line
+          indecies.push(i * header.subheaders.length + index);
+        });
+      });
+
+      _.each(this.schedule.cells, (row) => _.each(row, (cell) => {
+        cell.disabled = false;
+      }));
+
+      _.each(this.schedule.cells, (row) => _.each(indecies, (index) => {
+        row[index].disabled = true;
+      }));
+    },
   },
 };
 </script>
@@ -461,6 +558,9 @@ export default {
 .schedule-table {
   border: 1px solid rgb(180, 180, 180);
   border-collapse: collapse;
+  border-radius: 10px;
+  height: 100%;
+  width: 100%;
 }
 
 .schedule-cell {
@@ -468,18 +568,28 @@ export default {
   border-collapse: collapse;
 }
 
-.schedule-header, .schedule-subheader, .schedule-index {
+.schedule-header, .schedule-subheader {
+  /* border: 1px solid rgb(83, 83, 83); */
+  cursor: move;
+}
+
+.schedule-index {
   border: 1px solid rgb(180, 180, 180);
   cursor: move;
 }
 
-.schedule-header-container, .schedule-index {
+.schedule-header-container {
+  background: rgb(54, 54, 54);
+  color: whitesmoke;
+}
+
+.schedule-index {
   background: rgb(218, 218, 218);
   color: rgb(61, 60, 60);
 }
 
 .schedule-header {
-  background: rgb(204, 204, 204);
+  /* background: rgb(204, 204, 204); */
   height: 45px;
 }
 
@@ -489,11 +599,6 @@ export default {
 
 .schedule-subheader{
   height: 35px;
-}
-
-.schedule-table {
-  height: 100%;
-  width: 100%;
 }
 
 .schedule-row:nth-child(even) {
@@ -522,6 +627,10 @@ export default {
 .terms-row {
   height: 30px;
   max-height: 30px;
+}
+
+.disabled-cell {
+  background-color: #838383 !important;
 }
 
 .my-vertical-text {

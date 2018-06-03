@@ -12,6 +12,7 @@ export class Subject {
     this.os = [];
     this.duration = null;
     this.lessons = null;
+    this.terms = [];
     _.assignWith(this, data);
   }
 }
