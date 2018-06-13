@@ -89,11 +89,10 @@ export default {
             title: 'Entities',
             route: 'entities',
             items: [
-              { title: 'Prvi', value: 'entities1' },
-              { title: 'Drugi', value: 'entities2' },
-              { title: 'Treci', value: 'entities3' },
-              { title: 'Cetvrti', value: 'entities4' },
-              { title: 'Peti', value: 'entities5' },
+              { title: 'Courses', value: 'entities1' },
+              { title: 'Classrooms', value: 'entities2' },
+              { title: 'Subjects', value: 'entities3' },
+              { title: 'Softwares', value: 'entities4' },
             ],
           },
           {
