@@ -9,6 +9,8 @@ import VeeValidate from 'vee-validate';
 import AlertHelper from './helpers/alert-helper';
 import VueShortcuts from 'vue-shortcuts';
 import VueIntro from 'vue-introjs';
+import VueDraggableResizable from 'vue-draggable-resizable';
+
 
 // eslint-disable-next-line
 import * as _ from 'lodash';
@@ -21,6 +23,9 @@ Vue.config.productionTip = false;
 Vue.use(VueIntro);
 Vue.use(Vuetify);
 Vue.use(VueShortcuts);
+
+Vue.component('vue-draggable-resizable', VueDraggableResizable);
+
 Vue.prototype.router = router;
 Vue.prototype.$alert = AlertHelper;
 

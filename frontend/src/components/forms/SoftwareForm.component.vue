@@ -1,5 +1,6 @@
 <template>
   <form
+    v-if="software"
     class="pa-3"
     v-shortcuts="[
       { shortcut: [ 'ctrl', 'enter' ], callback: () => submit(), disabled: isDisabled },

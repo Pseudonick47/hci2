@@ -1,5 +1,6 @@
 <template>
   <form
+    v-if="course"
     v-shortcuts="[
       { shortcut: [ 'ctrl', 'enter' ], callback: () => submit(), disabled: isDisabled },
     ]"
@@ -104,6 +105,8 @@
 <script>
 import { Course } from 'Models/course.model';
 import CoursesController from 'Controllers/courses.controller';
+import ScheduleController from 'Controllers/schedule.controller';
+
 import store from 'Store';
 import { mapGetters } from 'vuex';
 
@@ -138,6 +141,7 @@ export default {
           if (this.editOrCreate === 'create') {
             CoursesController.create(this.course).then(({ data }) => {
               store.commit('addCourse', data);
+              ScheduleController.insertCourse(data);
               this.$alert.success('Successfully added! ');
               this.clear();
             }).

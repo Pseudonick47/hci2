@@ -11,18 +11,5 @@ module.exports = {
     let subject = await Subjects.create(requestBody).fetch();
     return res.json(subject);
   },
-
-  // async find(req, res) {
-  //   let subjects = await Subjects.find().populate('course');
-
-  //   for (subject of subjects) {
-  //     const courses = [];
-  //     for (course of subject.course) {
-  //       courses.push(await Courses.find(course.id));
-  //     }
-  //     subject.course = _.flatten(courses);
-  //   }
-  //   return res.json(subjects);
-  // },
 };
 

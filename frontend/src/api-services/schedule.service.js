@@ -15,4 +15,7 @@ export default {
   update(id, data) {
     return Axios.patch(`${PREFIX}${id}`, data);
   },
+  available() {
+    return Axios.get(`${PREFIX}/names`);
+  },
 };

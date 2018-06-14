@@ -73,6 +73,14 @@ const getters = {
   courses: (state) => _.values(state.courses),
   subjects: (state) => _.values(state.subjects),
   currentForm: (state) => state.currentForm,
+  getCourse: (state) => (id) => _.find(state.courses, [
+    'id',
+    id,
+  ]),
+  getSubject: (state) => (id) => _.find(state.subjects, [
+    'id',
+    id,
+  ]),
 };
 
 const mutations = {

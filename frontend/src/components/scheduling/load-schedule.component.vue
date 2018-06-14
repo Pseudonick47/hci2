@@ -56,7 +56,7 @@ export default {
   }),
   computed: {
     ...mapGetters('schedule', {
-      schedules: 'all',
+      schedules: 'available',
     }),
   },
   methods: {

@@ -2,7 +2,7 @@ export class Subject {
   constructor(data) {
     this.label = '';
     this.description = '';
-    this.sofware = [];
+    this.software = [];
     this.groupSize = null;
     this.projector = 'no';
     this.board = 'no';

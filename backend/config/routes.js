@@ -39,7 +39,8 @@ module.exports.routes = {
   *                                                                          *
   ***************************************************************************/
 
-
+  'GET /schedule/:id/auto': 'ScheduleController.auto',
+  'GET /schedule/names': 'ScheduleController.names',
   //  ╔═╗╔═╗╦  ╔═╗╔╗╔╔╦╗╔═╗╔═╗╦╔╗╔╔╦╗╔═╗
   //  ╠═╣╠═╝║  ║╣ ║║║ ║║╠═╝║ ║║║║║ ║ ╚═╗
   //  ╩ ╩╩  ╩  ╚═╝╝╚╝═╩╝╩  ╚═╝╩╝╚╝ ╩ ╚═╝

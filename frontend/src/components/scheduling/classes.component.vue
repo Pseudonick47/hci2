@@ -29,6 +29,7 @@
           class="title pa-2"
           style="word-break: break-all;"
         >{{ schedule.name }}</div>
+        <div v-else>No Schedule Loaded</div>
       </v-container>
       <v-toolbar
         v-else
@@ -38,6 +39,7 @@
         <v-list class="pa-0">
           <v-list-tile>
             <v-list-tile-content v-if="schedule">{{ schedule.name }}</v-list-tile-content>
+            <v-list-tile-content v-else>No Schedule Loaded</v-list-tile-content>
             <v-spacer />
             <v-list-tile-action
               style="display: flex; justify-content: center; align-items: center;"

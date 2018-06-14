@@ -10,6 +10,7 @@
     </v-card>
   </v-dialog>
   <form
+    v-if="classroom"
     v-shortcuts="[
       { shortcut: [ 'ctrl', 'enter' ], callback: () => submit(), disabled: isDisabled },
     ]"
@@ -122,11 +123,15 @@
 </template>
 
 <script>
-import SoftwareForm from 'Components/forms/SoftwareForm.component';
-import { Classroom } from 'Models/classroom.model';
-import ClassroomsController from 'Controllers/classrooms.controller';
 import store from 'Store';
 import { mapGetters } from 'vuex';
+
+import SoftwareForm from 'Components/forms/SoftwareForm.component';
+
+import ClassroomsController from 'Controllers/classrooms.controller';
+import ScheduleController from 'Controllers/schedule.controller';
+
+import { Classroom } from 'Models/classroom.model';
 
 export default {
   name: 'ClassroomForm',
@@ -174,6 +179,7 @@ export default {
           ClassroomsController.create(this.classroom).then(({ data }) => {
             this.$alert.success('Successfully added! ');
             store.commit('addClassroom', data);
+            ScheduleController.insertClassroom();
             this.clear();
           }).
           catch(() => {
@@ -181,7 +187,7 @@ export default {
           });
         } else if (this.editOrCreate === 'edit') {
           this.classroom.software = this.classroom.software.map((x) => x.id);
-          ClassroomsController.update(this.classroom.id, this.classroom).then(() => {
+          ClassroomsController.update(this.classroom.id, this.classroom).then(({ data }) => {
             this.$alert.success('Successfully edited! ');
             this.$emit('clicked');
           });

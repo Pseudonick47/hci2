@@ -11,6 +11,7 @@
     </v-card>
   </v-dialog>
   <form
+    v-if="subject"
     v-shortcuts="[
       { shortcut: [ 'ctrl', 'enter' ], callback: () => submit(), disabled: isDisabled },
     ]"
@@ -181,6 +182,8 @@ import CourseForm from 'Components/forms/CourseForm.component';
 import SoftwareForm from 'Components/forms/SoftwareForm.component';
 import { Subject } from 'Models/subject.model';
 import SubjectsController from 'Controllers/subjects.controller';
+// import ScheduleController from 'Controllers/schedule.controller';
+
 import store from 'Store';
 import { mapGetters } from 'vuex';
 
@@ -247,6 +250,7 @@ export default {
             SubjectsController.create(this.subject).then(({ data }) => {
               this.$alert.success('Successfully added! ');
               store.commit('addSubject', data);
+              // ScheduleController.insertSubject(data);
               this.clear();
             }).
             catch(() => {

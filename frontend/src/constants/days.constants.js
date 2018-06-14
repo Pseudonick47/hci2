@@ -7,6 +7,9 @@ const WORK_DAYS = {
   saturday: 'SAT',
 };
 
+const NUM_WORK_DAYS = 6;
+
 export {
   WORK_DAYS,
+  NUM_WORK_DAYS,
 };

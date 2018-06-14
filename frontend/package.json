@@ -18,6 +18,7 @@
     "panzoom": "^4.5.0",
     "vee-validate": "^2.0.6",
     "vue": "^2.5.2",
+    "vue-draggable-resizable": "^1.7.1",
     "vue-introjs": "^1.2.0",
     "vue-router": "^3.0.1",
     "vue-shortcuts": "^1.1.2",
