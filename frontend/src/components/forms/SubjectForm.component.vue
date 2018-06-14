@@ -221,6 +221,15 @@ export default {
   }),
   methods: {
     submit () {
+      if (this.subject.projector === null) {
+        this.subject.projector = 'no';
+      }
+      if (this.subject.board === null) {
+        this.subject.board = 'no';
+      }
+      if (this.subject.smartBoard === null) {
+        this.subject.smartBoard = 'no';
+      }
       this.$validator.validateAll().then((result) => {
         if (result) {
           if (this.editOrCreate === 'create') {
@@ -233,6 +242,12 @@ export default {
               this.$alert.error('Error occurred.');
             });
           } else if (this.editOrCreate === 'edit') {
+            if (_.has(this.subject.software[0], 'createdAt')) {
+              this.subject.software = this.subject.software.map((s) => s.id);
+            }
+            if (_.has(this.subject.course[0], 'createdAt')) {
+              this.subject.course = this.subject.course.map((c) => c.id);
+            }
             SubjectsController.update(this.subject.id, this.subject).then(() => {
               this.$alert.success('Successfully edited! ');
               this.$emit('clicked');

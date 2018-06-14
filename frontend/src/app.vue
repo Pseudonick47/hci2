@@ -1,7 +1,10 @@
 <template>
   <v-app>
     <alert-box v-if="showAlert"/>
-    <v-toolbar app>
+    <v-toolbar 
+      id="app-toolbar"
+      app
+    >
       <v-toolbar-title>CS Laboratories</v-toolbar-title>
       <v-spacer/>
       <v-btn
