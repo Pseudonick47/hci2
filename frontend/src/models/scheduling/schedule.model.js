@@ -3,12 +3,16 @@ import { ScheduleTerm } from './schedule-term.model';
 import { ScheduleCell } from './schedule-cell.model';
 
 export class ScheduleModel {
-  constructor(name, n, m, terms) {
+  constructor(id, name, n, m, terms) {
+    this.id = id;
     this.name = name;
     this.terms = {};
     this.table = new ScheduleTable(n, m);
 
-    _.each(terms, this.insertTerm);
+    this.insertTerms(terms);
+
+    this.dirty = false;
+    this.changed = false;
   }
 
   export() {
@@ -21,6 +25,8 @@ export class ScheduleModel {
             'assigned',
             'row',
             'col',
+            'number',
+            'cellspan',
           ]);
         });
       });
@@ -29,16 +35,53 @@ export class ScheduleModel {
   }
 
   insertTerms(terms) {
+    let data = null;
+    let sub = null;
+    let cellspan = null;
+    let nRows = null;
+    let table = null;
+    let term = null;
+    let row = null;
+
     _.forOwn(terms, (subjects, course) => {
       if (!_.has(this.terms, course)) {
         this.terms[course] = {};
       }
 
       _.forOwn(subjects, (terms, subject) => {
-        if (!_.has(this.terms[course], subject)) {
-          this.terms[course][subject] = {};
-          this.terms[course][subject].data = [];
-        }
+        data = [];
+
+        sub = terms[0].subject;
+        cellspan = Math.ceil(sub.duration / 15);
+        nRows = sub.lessons * cellspan + sub.lessons;
+        table = new ScheduleTable(nRows, 1);
+
+        term = null;
+        _.each(terms, (t, i) => {
+          term = new ScheduleTerm(t);
+          data.push(term);
+
+          row = i * (cellspan + 1);
+          if (!term.row) {
+            table.cells[row][0] = new ScheduleCell({
+              row,
+              col: 0,
+              rowspan: cellspan,
+              draggable: true,
+              changeable: false,
+              term,
+            });
+          } else {
+            this.table.mergeCells(term.row, term.col, cellspan);
+            this.table.cells[term.row][term.col].update({
+              changeable: false,
+              draggable: true,
+              term,
+            });
+          }
+        });
+
+        this.terms[course][subject] = { data, table };
       });
     });
   }

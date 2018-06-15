@@ -123,7 +123,6 @@ export default {
   computed: {
     unassigned() {
       const terms = this.model.terms[this.course.label][this.subject.label].data;
-      console.log(terms);
       return _.filter(terms, (t) => t && !t.assigned).length;
     },
     origin: {
@@ -255,6 +254,8 @@ export default {
 
       this.dropPerformed = true;
 
+      this.model.dirty = true;
+      this.model.changed = true;
       this.$root.$emit('termsDrop');
     },
   },

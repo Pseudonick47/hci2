@@ -5,6 +5,9 @@ import { ScheduleModel } from 'Models/scheduling/schedule.model';
 import { NUM_WORK_DAYS } from '@/constants/days.constants';
 
 export default {
+  saveInterval: null,
+  updateInterval: null,
+
   create(name) {
     const numClassrooms = store.getters.classrooms.length;
 
@@ -18,21 +21,55 @@ export default {
       _.each(subject.course, (course) => schedule.createTerms(course, subject));
     });
 
-    this.active(schedule);
-
-    ScheduleApiService.create(schedule.export());
+    ScheduleApiService.create(schedule.export()).then(({ data }) => {
+      this.active(data);
+    });
   },
 
   active(schedule) {
     store.commit('schedule/setActive', schedule);
-  },
+    this.persist(schedule);
 
-  save(schedule) {
-    localStorage.setItem('schedule', JSON.stringify(schedule));
+    if (this.saveInterval) {
+      clearInterval(this.saveInterval);
+    }
+
+    this.saveInterval = setInterval(this.save, 10000);
+
+    if (this.updateInterval) {
+      clearInterval(this.updateInterval);
+    }
+
+    this.updateInterval = setInterval(this.update, 60000);
   },
 
   load() {
-    return JSON.parse(localStorage.getItem('schedule'));
+    const schedule = JSON.parse(localStorage.getItem('schedule'));
+    if (schedule) {
+      this.active(this.import(schedule));
+    }
+  },
+
+  save() {
+    const schedule = store.getters['schedule/active'];
+    if (schedule.dirty) {
+      localStorage.setItem('schedule', JSON.stringify(schedule.export()));
+      schedule.dirty = false;
+      console.log('saved');
+    }
+  },
+
+  update() {
+    const schedule = store.getters['schedule/active'];
+    if (schedule.changed) {
+      ScheduleApiService.update(schedule.id, schedule.export());
+      schedule.changed = false;
+      console.log('updated');
+    }
+  },
+
+  persist(schedule) {
+    localStorage.setItem('schedule', JSON.stringify(schedule.export()));
   },
 
   list() {
@@ -40,19 +77,39 @@ export default {
   },
 
   get(id) {
-    ScheduleApiService.get(id).then((data) => {
-      const numClassrooms = store.getters.classrooms.length;
-      const numColumns = numClassrooms * NUM_WORK_DAYS;
-
-      const model = new ScheduleModel(data.name, 61, numColumns);
-      model.insertTerms(data.terms);
-
-      this.active(model);
+    ScheduleApiService.get(id).then(({ data }) => {
+      this.update();
+      this.active(this.import(data));
     });
   },
 
+  import(data) {
+    const courses = store.getters.courses;
+    const subjects = store.getters.subjects;
+
+    _.forOwn(data.terms, (subs, course) => {
+      _.forOwn(subs, (terms, subject) => {
+        _.each(terms, (term) => {
+          term.course = _.find(courses, [
+            'label',
+            course,
+          ]);
+          term.subject = _.find(subjects, [
+            'label',
+            subject,
+          ]);
+        });
+      });
+    });
+
+    const numClassrooms = store.getters.classrooms.length;
+    const numColumns = numClassrooms * NUM_WORK_DAYS;
+
+    return new ScheduleModel(data.id, data.name, 61, numColumns, data.terms);
+  },
+
   fetchAvailable() {
-    ScheduleApiService.available().then((data) => {
+    ScheduleApiService.available().then(({ data }) => {
       store.commit('schedule/setAvailable', data);
     });
   },

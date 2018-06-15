@@ -90,6 +90,9 @@ export default {
       model: 'active',
     }),
   },
+  beforeMount() {
+    ScheduleController.fetchAvailable();
+  },
   mounted() {
     const area = document.getElementById('area-container');
 
@@ -123,7 +126,7 @@ export default {
     load(schedule) {
       this.loadDialog = false;
       ScheduleController.get(schedule.id);
-    }
+    },
   },
 };
 </script>

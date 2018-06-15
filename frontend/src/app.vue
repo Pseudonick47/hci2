@@ -92,12 +92,10 @@ export default {
       });
       SubjectsController.list().then(({ data }) => {
         this.$store.commit('setSubjects', data);
+        ScheduleController.load();
       });
       SoftwareController.list().then(({ data }) => {
         this.$store.commit('setSoftwares', data);
-      });
-      ScheduleController.list().then(({ data }) => {
-        this.$store.commit('schedule/set', data);
       });
     },
   },

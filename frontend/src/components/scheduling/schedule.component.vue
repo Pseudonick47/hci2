@@ -100,6 +100,9 @@ export default {
       this.onDragend();
     });
     this.$root.$on('drawerDrop', () => {
+      this.model.dirty = true;
+      this.model.changed = true;
+
       this.dropPerformed = true;
       this.onDragend();
     });
@@ -221,6 +224,8 @@ export default {
 
       this.dropPerformed = true;
 
+      this.model.dirty = true;
+      this.model.changed = true;
       this.$root.$emit('scheduleDrop');
     },
   },

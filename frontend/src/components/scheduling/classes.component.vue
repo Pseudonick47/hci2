@@ -65,7 +65,7 @@
             block
             @click="requestNew"
           >New</v-btn>
-          <v-btn
+          <!-- <v-btn
             flat
             block
             @click="requestAuto"
@@ -76,7 +76,7 @@
             flat
             block
             @click="requestSave"
-          >Save</v-btn>
+          >Save</v-btn> -->
           <v-btn
             flat
             block

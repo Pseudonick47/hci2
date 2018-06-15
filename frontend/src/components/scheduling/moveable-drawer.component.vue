@@ -5,7 +5,7 @@
     :minh="300"
     :z="20"
     :x="320"
-    :y="600"
+    :y="550"
     :resizable="false"
     id="moveable-drawer"
   >
@@ -47,7 +47,7 @@ export default {
     dnd: {
       type: Object,
       required: true,
-    }
+    },
   },
   data: () => ({
     table: new ScheduleTable(12, 12),
@@ -181,7 +181,7 @@ export default {
 
       this.$root.$emit('drawerDrop');
     },
-  }
+  },
 };
 </script>
 <style>
