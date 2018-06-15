@@ -60,11 +60,24 @@
           row
           wrap
         >
-          <v-btn
-            flat
-            block
-            @click="requestNew"
-          >New</v-btn>
+          <v-tooltip right style="width: 100%">
+            <v-btn
+              flat
+              block
+              slot="activator"
+              @click="requestNew"
+            >New</v-btn>
+            <span>Create new schedule</span>
+          </v-tooltip>
+          <v-tooltip right style="width: 100%">
+            <v-btn
+              flat
+              block
+              slot="activator"
+              @click="requestLoad"
+            >Load</v-btn>
+            <span>Load existing schedule</span>
+          </v-tooltip>
           <!-- <v-btn
             flat
             block
@@ -77,11 +90,6 @@
             block
             @click="requestSave"
           >Save</v-btn> -->
-          <v-btn
-            flat
-            block
-            @click="requestLoad"
-          >Load</v-btn>
         </v-layout>
       </v-container>
       <v-divider />

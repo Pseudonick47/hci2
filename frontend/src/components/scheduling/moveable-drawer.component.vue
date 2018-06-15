@@ -9,7 +9,10 @@
     :resizable="false"
     id="moveable-drawer"
   >
-    <v-icon id="drag-anchor">menu</v-icon>
+    <v-tooltip right>
+      <v-icon id="drag-anchor" slot="activator">menu</v-icon>
+      <span>Click and drag</span>
+    </v-tooltip>
     <table class="pa-2" id="moveable-table">
       <tbody class="moveable-table__body">
         <tr

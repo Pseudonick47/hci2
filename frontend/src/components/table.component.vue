@@ -183,6 +183,7 @@ export default {
       } else if (this.title === 'subject') {
         SubjectsController.delete(this.itemToDelete.id).then(({ data }) => {
           this.$alert.success('Successfully deleted! ');
+          ScheduleController.removeSubject(data);
           store.commit('deleteSubject', data);
         });
       } else {

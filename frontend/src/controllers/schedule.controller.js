@@ -13,16 +13,16 @@ export default {
 
     const numColumns = numClassrooms * NUM_WORK_DAYS;
 
-    const schedule = new ScheduleModel(name, 61, numColumns);
+    const schedule = new ScheduleModel('', name, 61, numColumns);
 
     const subjects = store.getters.subjects;
 
     _.each(subjects, (subject) => {
-      _.each(subject.course, (course) => schedule.createTerms(course, subject));
+      schedule.createTerms(subject);
     });
 
     ScheduleApiService.create(schedule.export()).then(({ data }) => {
-      this.active(data);
+      this.active(this.import(data));
     });
   },
 
@@ -52,19 +52,17 @@ export default {
 
   save() {
     const schedule = store.getters['schedule/active'];
-    if (schedule.dirty) {
+    if (schedule && schedule.dirty) {
       localStorage.setItem('schedule', JSON.stringify(schedule.export()));
       schedule.dirty = false;
-      console.log('saved');
     }
   },
 
   update() {
     const schedule = store.getters['schedule/active'];
-    if (schedule.changed) {
+    if (schedule && schedule.changed) {
       ScheduleApiService.update(schedule.id, schedule.export());
       schedule.changed = false;
-      console.log('updated');
     }
   },
 
@@ -182,6 +180,9 @@ export default {
     _.times(NUM_WORK_DAYS, (i) => {
       schedule.table.insertColumn(i * index + index);
     });
+
+    schedule.dirty = true;
+    schedule.changed = true;
   },
 
   removeClassroom(classroom) {
@@ -202,5 +203,26 @@ export default {
     _.times(NUM_WORK_DAYS, (i) => {
       schedule.table.removeColumn(i * index + index);
     });
+
+    schedule.dirty = true;
+    schedule.changed = true;
+  },
+
+  insertSubject(subject) {
+    const schedule = store.getters['schedule/active'];
+
+    schedule.createTerms(subject);
+
+    schedule.dirty = true;
+    schedule.changed = true;
+  },
+
+  removeSubject(subject) {
+    const schedule = store.getters['schedule/active'];
+
+    schedule.removeTerms(subject);
+
+    schedule.dirty = true;
+    schedule.changed = true;
   },
 };

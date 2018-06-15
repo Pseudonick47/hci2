@@ -86,59 +86,79 @@ export class ScheduleModel {
     });
   }
 
-  createTerms(course, subject) {
-    const c = course.label;
+  createTerms(subject) {
     const s = subject.label;
-
-    if (!_.has(this.terms, c)) {
-      this.terms[c] = {};
-    }
-
-    if (!_.has(this.terms[c], s)) {
-      this.terms[c][s] = {};
-      this.terms[c][s].data = [];
-    }
 
     const cellspan = Math.ceil(subject.duration / 15);
     const nRows = subject.lessons * cellspan + subject.lessons;
-    const table = new ScheduleTable(nRows, 1);
 
-    _.times(subject.lessons, (i) => {
-      const term = new ScheduleTerm({ course, subject, cellspan, number: i });
-      this.terms[c][s].data.push(term);
+    let c = null;
+    let table = null;
+    let term = null;
+    let row = null;
 
-      const row = i * (cellspan + 1);
-      table.cells[row][0] = new ScheduleCell({
-        row,
-        col: 0,
-        rowspan: cellspan,
-        draggable: true,
-        changeable: false,
-        term,
+    _.each(subject.course, (course) => {
+      c = course.label;
+      if (!_.has(this.terms, c)) {
+        this.terms[c] = {};
+      }
+
+      if (!_.has(this.terms[c], s)) {
+        this.terms[c][s] = {};
+        this.terms[c][s].data = [];
+      }
+
+      table = new ScheduleTable(nRows, 1);
+
+      _.times(subject.lessons, (i) => {
+        term = new ScheduleTerm({ course, subject, cellspan, number: i });
+        this.terms[c][s].data.push(term);
+
+        row = i * (cellspan + 1);
+        table.cells[row][0] = new ScheduleCell({
+          row,
+          col: 0,
+          rowspan: cellspan,
+          draggable: true,
+          changeable: false,
+          term,
+        });
+
+        table.mergeCells(row, 0, cellspan);
       });
 
-      table.mergeCells(row, 0, cellspan);
+      this.terms[c][s].table = table;
     });
-
-    this.terms[c][s].table = table;
   }
 
-  removeTerms(course, subject) {
-    const c = course.label;
+  removeTerms(subject) {
     const s = subject.label;
 
-    if (!_.has(this.terms, c)) {
-      return;
-    }
+    let c = null;
 
-    if (!_.has(this.terms[c], s)) {
-      return;
-    }
+    _.each(subject.course, (course) => {
+      c = course.label;
 
-    delete this.terms[c][s];
+      if (!_.has(this.terms, c)) {
+        return;
+      }
 
-    if (_.isEmpty(this.terms[c])) {
-      delete this.terms[c];
-    }
+      if (!_.has(this.terms[c], s)) {
+        return;
+      }
+
+      _.each(this.terms[c][s].data, (term) => {
+        if (term.row) {
+          this.table.splitCells(term.row, term.col);
+          this.table.cells[term.row][term.col].reset();
+        }
+      });
+
+      delete this.terms[c][s];
+
+      if (_.isEmpty(this.terms[c])) {
+        delete this.terms[c];
+      }
+    });
   }
 }

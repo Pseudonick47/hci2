@@ -7,7 +7,7 @@
           rowspan="2"
         >Time</th>
         <th
-          class="schedule__header__cell--small"
+          class="schedule__header__cell"
           v-for="header in headers"
           :key="header"
           :colspan="subheaders.length"
@@ -18,7 +18,7 @@
           <th
             v-for="(subheader, j) in subheaders"
             :key="`schedule-subheader-${i}-${j}`"
-            class="schedule__header__cell"
+            class="schedule__header__cell--small"
           >{{ subheader }}</th>
         </template>
       </tr>
@@ -253,6 +253,7 @@ export default {
 
 .schedule__header__cell {
   height: 45px;
+  font-size: 16px;
 }
 
 .schedule__header__cell--small {
@@ -264,6 +265,8 @@ export default {
   cursor: move;
   background: rgb(218, 218, 218);
   color: rgb(61, 60, 60);
+  text-align: center;
+  font-weight: bold;
 }
 
 .schedule__body__cell {
@@ -296,12 +299,16 @@ export default {
   display: flex !important;
   align-items: center;
   justify-content: center;
-  background-color: #a6abaf !important;
+  /* background-color: #a6abaf !important; */
+  background-color: #444647 !important;
+
   cursor: -webkit-grab;
 }
 
 .schedule__term__card__text {
   transform: rotate(-90deg);
+  color: whitesmoke;
+  flex: none !important;
 }
 
 </style>

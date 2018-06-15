@@ -19,11 +19,48 @@
   >
     <v-card
       v-if="model.term"
-      class="schedule__term__card"
+      class="schedule__term__card elevation-8"
     >
-      <div class="title schedule__term__card__text">
-        {{ model.term.course.label }} {{ model.term.subject.label }} {{ model.term.number }}
-      </div>
+      <v-container
+        fluid
+        style="height: 100%; padding: 0;"
+      >
+        <v-layout row style="height: 33.33%">
+          <v-flex
+            d-flex
+            align-end
+            justify-center
+            pb-2
+          >
+            <div class="title schedule__term__card__text">
+              {{ model.term.number }}
+            </div>
+          </v-flex>
+        </v-layout>
+        <v-layout row style="height: 33.33%">
+          <v-flex
+            d-flex
+            align-center
+            justify-center
+          >
+            <div class="title schedule__term__card__text">
+              {{ model.term.subject.label }}
+            </div>
+          </v-flex>
+        </v-layout>
+        <v-layout row style="height: 33.33%">
+          <v-flex
+            d-flex
+            align-start
+            justify-center
+            pt-2
+          >
+            <div class="title schedule__term__card__text">
+              {{ model.term.course.label }}
+            </div>
+          </v-flex>
+        </v-layout>
+      </v-container>
     </v-card>
   </td>
 </template>
