@@ -29,6 +29,7 @@
           class="title pa-2"
           style="word-break: break-all;"
         >{{ schedule.name }}</div>
+        <div v-else>No Schedule Loaded</div>
       </v-container>
       <v-toolbar
         v-else
@@ -38,6 +39,7 @@
         <v-list class="pa-0">
           <v-list-tile>
             <v-list-tile-content v-if="schedule">{{ schedule.name }}</v-list-tile-content>
+            <v-list-tile-content v-else>No Schedule Loaded</v-list-tile-content>
             <v-spacer />
             <v-list-tile-action
               style="display: flex; justify-content: center; align-items: center;"
@@ -58,12 +60,25 @@
           row
           wrap
         >
-          <v-btn
-            flat
-            block
-            @click="requestNew"
-          >New</v-btn>
-          <v-btn
+          <v-tooltip right style="width: 100%">
+            <v-btn
+              flat
+              block
+              slot="activator"
+              @click="requestNew"
+            >New</v-btn>
+            <span>Create new schedule</span>
+          </v-tooltip>
+          <v-tooltip right style="width: 100%">
+            <v-btn
+              flat
+              block
+              slot="activator"
+              @click="requestLoad"
+            >Load</v-btn>
+            <span>Load existing schedule</span>
+          </v-tooltip>
+          <!-- <v-btn
             flat
             block
             @click="requestAuto"
@@ -74,12 +89,7 @@
             flat
             block
             @click="requestSave"
-          >Save</v-btn>
-          <v-btn
-            flat
-            block
-            @click="requestLoad"
-          >Load</v-btn>
+          >Save</v-btn> -->
         </v-layout>
       </v-container>
       <v-divider />

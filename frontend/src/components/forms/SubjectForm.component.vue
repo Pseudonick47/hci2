@@ -11,6 +11,7 @@
     </v-card>
   </v-dialog>
   <form
+    v-if="subject"
     v-shortcuts="[
       { shortcut: [ 'ctrl', 'enter' ], callback: () => submit(), disabled: isDisabled },
     ]"
@@ -181,6 +182,8 @@ import CourseForm from 'Components/forms/CourseForm.component';
 import SoftwareForm from 'Components/forms/SoftwareForm.component';
 import { Subject } from 'Models/subject.model';
 import SubjectsController from 'Controllers/subjects.controller';
+import ScheduleController from 'Controllers/schedule.controller';
+
 import store from 'Store';
 import { mapGetters } from 'vuex';
 
@@ -229,32 +232,35 @@ export default {
   }),
   methods: {
     submit () {
+      if (this.subject.projector === null) {
+        this.subject.projector = 'no';
+      }
+      if (this.subject.board === null) {
+        this.subject.board = 'no';
+      }
+      if (this.subject.smartBoard === null) {
+        this.subject.smartBoard = 'no';
+      }
       this.$validator.validateAll().then((result) => {
         if (result) {
-          this.subject.terms = {};
-          _.each(this.subject.course, (course) => {
-            this.subject.terms[course] = _.times(this.subject.lessons, (i) => ({
-              id: i,
-              assigned: false,
-              row: null,
-              col: null,
-              rowspan: Math.ceil(this.subject.duration / 15),
-            }));
-          });
-
           if (this.editOrCreate === 'create') {
             // this.$emit('clicked');
             SubjectsController.create(this.subject).then(({ data }) => {
               this.$alert.success('Successfully added! ');
               store.commit('addSubject', data);
+              ScheduleController.insertSubject(data);
               this.clear();
             }).
             catch(() => {
               this.$alert.error('Error occurred.');
             });
           } else if (this.editOrCreate === 'edit') {
-            this.subject.software = this.subject.software.map((s) => s.id);
-            this.subject.course = this.subject.course.map((c) => c.id);
+            if (_.has(this.subject.software[0], 'createdAt')) {
+              this.subject.software = this.subject.software.map((s) => s.id);
+            }
+            if (_.has(this.subject.course[0], 'createdAt')) {
+              this.subject.course = this.subject.course.map((c) => c.id);
+            }
             SubjectsController.update(this.subject.id, this.subject).then(() => {
               this.$alert.success('Successfully edited! ');
               this.$emit('clicked');

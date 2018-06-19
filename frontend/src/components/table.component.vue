@@ -101,6 +101,7 @@ import CoursesController from 'Controllers/courses.controller';
 import SubjectsController from 'Controllers/subjects.controller';
 import ClassroomsController from 'Controllers/classrooms.controller';
 import SoftwareController from 'Controllers/software.controller';
+import ScheduleController from 'Controllers/schedule.controller';
 import store from 'Store';
 
 export default {
@@ -171,6 +172,7 @@ export default {
       if (this.title === 'classroom') {
         ClassroomsController.delete(this.itemToDelete.id).then(({ data }) => {
           this.$alert.success('Successfully deleted! ');
+          ScheduleController.removeClassroom(data);
           store.commit('deleteClassroom', data);
         });
       } else if (this.title === 'course') {
@@ -181,6 +183,7 @@ export default {
       } else if (this.title === 'subject') {
         SubjectsController.delete(this.itemToDelete.id).then(({ data }) => {
           this.$alert.success('Successfully deleted! ');
+          ScheduleController.removeSubject(data);
           store.commit('deleteSubject', data);
         });
       } else {

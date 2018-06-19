@@ -86,18 +86,17 @@ export default {
     getData() {
       ClassroomsController.list().then(({ data }) => {
         this.$store.commit('setClassrooms', data);
+
+        SubjectsController.list().then(({ data }) => {
+          this.$store.commit('setSubjects', data);
+          ScheduleController.load();
+        });
       });
       CoursesController.list().then(({ data }) => {
         this.$store.commit('setCourses', data);
       });
-      SubjectsController.list().then(({ data }) => {
-        this.$store.commit('setSubjects', data);
-      });
       SoftwareController.list().then(({ data }) => {
         this.$store.commit('setSoftwares', data);
-      });
-      ScheduleController.list().then(({ data }) => {
-        this.$store.commit('schedule/set', data);
       });
     },
   },

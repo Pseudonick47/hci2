@@ -1,5 +1,6 @@
 <template>
   <form
+    v-if="software"
     class="pa-3"
     v-shortcuts="[
       { shortcut: [ 'ctrl', 'enter' ], callback: () => submit(), disabled: isDisabled },
@@ -139,6 +140,15 @@ export default {
   },
   methods: {
     submit () {
+      if (this.software.projector === null) {
+        this.software.projector = 'no';
+      }
+      if (this.software.board === null) {
+        this.software.board = 'no';
+      }
+      if (this.software.smartBoard === null) {
+        this.software.smartBoard = 'no';
+      }
       this.$validator.validateAll().then((result) => {
       if (result) {
         if (this.editOrCreate === 'create') {

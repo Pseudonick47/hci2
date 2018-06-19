@@ -8,21 +8,29 @@
 module.exports = {
   async create(req, res) {
     let requestBody = req.body;
+    const courses = requestBody.course;
+
     let subject = await Subjects.create(requestBody).fetch();
+
+    let course = null;
+    for (c of courses) {
+      course = await Courses.findOne({'id': c});
+      await Schedule.createTerms(course, subject);
+    }
+
     return res.json(subject);
   },
 
-  // async find(req, res) {
-  //   let subjects = await Subjects.find().populate('course');
+  async destroy(req, res) {
+    const subject = await Subjects.findOne({ id: req.param('id')}).populate('course');
 
-  //   for (subject of subjects) {
-  //     const courses = [];
-  //     for (course of subject.course) {
-  //       courses.push(await Courses.find(course.id));
-  //     }
-  //     subject.course = _.flatten(courses);
-  //   }
-  //   return res.json(subjects);
-  // },
+    for (course of subject.course) {
+      await Schedule.removeTerms(course, subject);
+    }
+
+    await Subjects.destroy({ id: subject.id });
+
+    return res.json(subject);
+  }
 };
 

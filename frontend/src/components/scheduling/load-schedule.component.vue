@@ -24,6 +24,7 @@
             item-value="name"
             item-text="name"
             return-object
+            @change="confirmDisabled = false"
           ></v-select>
         </v-form>
       </v-card-text>
@@ -37,7 +38,7 @@
             @click="cancel"
           >Cancel</v-btn>
           <v-btn
-            :disabled="errors.has('select')"
+            :disabled="confirmDisabled || errors.has('select')"
             flat
             @click="confirm"
           >Confirm</v-btn>
@@ -50,13 +51,14 @@
 import { mapGetters } from 'vuex';
 
 export default {
-  name: 'new-schedule-dialog',
+  name: 'load-schedule-dialog',
   data: () => ({
     schedule: null,
+    confirmDisabled: true,
   }),
   computed: {
     ...mapGetters('schedule', {
-      schedules: 'all',
+      schedules: 'available',
     }),
   },
   methods: {
