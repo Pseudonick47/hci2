@@ -67,7 +67,7 @@ export default {
     change(val) {
       if (val === '') {
         this.confirmDisabled = true;
-        this.errorMsg = "Name is required."
+        this.errorMsg = 'Name is required.';
       } else {
         this.confirmDisabled = false;
         this.errorMsg = [];

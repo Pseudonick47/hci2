@@ -216,5 +216,6 @@ export default {
 #drag-anchor {
   cursor: move;
   margin: 3px;
+  user-select: none;
 }
 </style>

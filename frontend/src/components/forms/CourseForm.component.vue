@@ -136,6 +136,15 @@ export default {
   },
   methods: {
     submit () {
+      if (this.course.projector === null) {
+        this.course.projector = 'no';
+      }
+      if (this.course.board === null) {
+        this.course.board = 'no';
+      }
+      if (this.course.smartBoard === null) {
+        this.course.smartBoard = 'no';
+      }
       this.$validator.validateAll().then((result) => {
         if (result) {
           if (this.editOrCreate === 'create') {

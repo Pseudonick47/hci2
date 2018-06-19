@@ -74,24 +74,18 @@
     <hr>
     <v-layout row>
     <v-checkbox
-      v-validate="'required'"
       v-model="classroom.os"
-      :error-messages="errors.collect('os')"
       value="windows"
       label="Windows"
       data-vv-name="os"
       type="checkbox"
-      required
     ></v-checkbox>
    <v-checkbox
-      v-validate="'required'"
       v-model="classroom.os"
-      :error-messages="errors.collect('os')"
       value="linux"
       label="Linux"
       data-vv-name="os"
       type="checkbox"
-      required
     ></v-checkbox>
     </v-layout>
     <v-layout row>
@@ -173,6 +167,15 @@ export default {
   }),
   methods: {
     submit () {
+      if (this.classroom.projector === null) {
+        this.classroom.projector = 'no';
+      }
+      if (this.classroom.board === null) {
+        this.classroom.board = 'no';
+      }
+      if (this.classroom.smartBoard === null) {
+        this.classroom.smartBoard = 'no';
+      }
       this.$validator.validateAll().then((result) => {
       if (result) {
         if (this.editOrCreate === 'create') {
@@ -186,8 +189,10 @@ export default {
             this.$alert.error('Error occurred.');
           });
         } else if (this.editOrCreate === 'edit') {
-          this.classroom.software = this.classroom.software.map((x) => x.id);
-          ClassroomsController.update(this.classroom.id, this.classroom).then(({ data }) => {
+          if (_.has(this.classroom.software[0], 'createdAt')) {
+            this.classroom.software = this.classroom.software.map((x) => x.id);
+          }
+          ClassroomsController.update(this.classroom.id, this.classroom).then(() => {
             this.$alert.success('Successfully edited! ');
             this.$emit('clicked');
           });

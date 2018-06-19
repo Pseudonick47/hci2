@@ -110,6 +110,7 @@ export default {
   },
   methods: {
     selected(payload) {
+      console.log(payload);
       if (this.model) {
         const { course, subject } = payload;
         this.subject = subject;
