@@ -150,7 +150,6 @@ export default {
           if (this.editOrCreate === 'create') {
             CoursesController.create(this.course).then(({ data }) => {
               store.commit('addCourse', data);
-              ScheduleController.insertCourse(data);
               this.$alert.success('Successfully added! ');
               this.clear();
             }).

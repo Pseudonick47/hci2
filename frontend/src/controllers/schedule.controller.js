@@ -9,6 +9,8 @@ export default {
   updateInterval: null,
 
   create(name) {
+    this.update();
+
     const numClassrooms = store.getters.classrooms.length;
 
     const numColumns = numClassrooms * NUM_WORK_DAYS;
@@ -44,16 +46,18 @@ export default {
   },
 
   load() {
-    const schedule = JSON.parse(localStorage.getItem('schedule'));
-    if (schedule) {
-      this.active(this.import(schedule));
+    const s = JSON.parse(localStorage.getItem('schedule'));
+    if (s) {
+      s.schedule.id = s.id;
+      this.active(this.import(s.schedule));
     }
   },
 
   save() {
     const schedule = store.getters['schedule/active'];
     if (schedule && schedule.dirty) {
-      localStorage.setItem('schedule', JSON.stringify(schedule.export()));
+      const s = { id: schedule.id, schedule: schedule.export() };
+      localStorage.setItem('schedule', JSON.stringify(s));
       schedule.dirty = false;
     }
   },
@@ -67,7 +71,8 @@ export default {
   },
 
   persist(schedule) {
-    localStorage.setItem('schedule', JSON.stringify(schedule.export()));
+    const s = { id: schedule.id, schedule: schedule.export() };
+    localStorage.setItem('schedule', JSON.stringify(s));
   },
 
   list() {
@@ -116,7 +121,7 @@ export default {
     const classrooms = store.getters.classrooms;
     const numClassrooms = classrooms.length;
 
-    const toDisable = _.filter(classrooms, (classroom) => this.checkConstraints(subject, classroom));
+    const toDisable = _.filter(classrooms, (classroom) => !this.checkConstraints(subject, classroom));
 
     const indices = _.map(toDisable, (classroom) => _.findIndex(classrooms, classroom));
 
@@ -150,7 +155,7 @@ export default {
 
     let ok = true;
     _.each(subject.os, (os) => {
-      if (_.find(classroom.os, (los) => los === os)) {
+      if (!_.find(classroom.os, (los) => los === os)) {
         ok = false;
       }
     });
@@ -161,7 +166,7 @@ export default {
 
     ok = true;
     _.each(subject.software, (s) => {
-      if (_.find(classroom.software, (ls) => ls.id === s.id)) {
+      if (!_.find(classroom.software, (ls) => ls.id === s.id)) {
         ok = false;
       }
     });
@@ -178,7 +183,7 @@ export default {
     const schedule = store.getters['schedule/active'];
 
     _.times(NUM_WORK_DAYS, (i) => {
-      schedule.table.insertColumn(i * index + index);
+      schedule.table.insertColumn((NUM_WORK_DAYS - i - 1) * index + index);
     });
 
     schedule.dirty = true;
@@ -186,22 +191,28 @@ export default {
   },
 
   removeClassroom(classroom) {
-    const index = _.findIndex(store.getters.classrooms, classroom);
+    const index = _.findIndex(store.getters.classrooms, [
+      'id',
+      classroom.id,
+    ]);
+    const numClassrooms = store.getters.classrooms.length;
     const schedule = store.getters['schedule/active'];
 
     let cell = null;
     _.each(schedule.table.cells, (row) => {
       _.times(NUM_WORK_DAYS, (i) => {
-        cell = row[i * index + index];
+        cell = row[i * numClassrooms + index];
         if (cell.term) {
           cell.term.assigned = false;
+          cell.term.row = null;
+          cell.term.col = null;
           cell.term = null;
         }
       });
     });
 
     _.times(NUM_WORK_DAYS, (i) => {
-      schedule.table.removeColumn(i * index + index);
+      schedule.table.removeColumn((NUM_WORK_DAYS - i - 1) * numClassrooms + index);
     });
 
     schedule.dirty = true;

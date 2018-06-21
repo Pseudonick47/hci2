@@ -1,15 +1,16 @@
 import Schedule from 'Components/scheduling/home.component';
-import Welcome from 'Components/welcome.component';
+// import Welcome from 'Components/welcome.component';
 import Entities from 'Components/entities.component';
 
 export const routes = [
   {
     path: '/',
-    name: 'welcome',
-    component: Welcome,
-    meta: {
-      guest: true,
-    },
+    redirect: '/schedule',
+    // name: 'welcome',
+    // component: Welcome,
+    // meta: {
+    //   guest: true,
+    // },
   },
   {
     path: '/schedule',

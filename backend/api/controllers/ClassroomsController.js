@@ -10,25 +10,32 @@ module.exports = {
     let requestBody = req.body;
     let classroom = await Classrooms.create(requestBody).fetch();
 
-    // const numClassrooms = await Classrooms.count();
-    // for(let i = 0; i < 6; i++) {
-    //   await Schedule.shiftRight(i * numClassrooms + numClassrooms);
-    // }
+    const classrooms = await Classrooms.find();
+    const numClassrooms = classrooms.length;
+    const index = _.findIndex(classrooms, 'id', classroom.id);
 
+    for(let i = 0; i < 6; i++) {
+      await Schedule.shiftRight(i * (numClassrooms - 1) + index);
+    }
+
+    classroom = await Classrooms.findOne({ id: classroom.id }).populate('software');
     return res.json(classroom);
   },
 
-  // async delete(req, res) {
-  //   let classroom = await Classrooms.findOne({ id: req.param('id') });
+  async destroy(req, res) {
+    let classroom = await Classrooms.findOne({ id: req.param('id') });
 
-  //   const numClassrooms = await Classrooms.count();
-  //   for(let i = 0; i < 6; i++) {
-  //     await Schedule.leftRight(i * numClassrooms + numClassrooms);
-  //   }
+    const classrooms = await Classrooms.find();
+    const numClassrooms = classrooms.length;
+    const index = _.findIndex(classrooms, 'id', classroom.id);
 
-  //   await Classrooms.destroy({ id: classroom.id });
+    for(let i = 0; i < 6; i++) {
+      await Schedule.shiftLeft(i * numClassrooms + index);
+    }
 
-  //   return res.json(classroom);
-  // },
+    await Classrooms.destroy({ id: classroom.id });
+
+    return res.json(classroom);
+  },
 };
 

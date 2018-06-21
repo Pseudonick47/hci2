@@ -128,7 +128,7 @@ html {
 }
 
 #app-toolbar {
-  z-index: 500;
+  z-index: 150;
 }
 
 .tutorial-focused {
