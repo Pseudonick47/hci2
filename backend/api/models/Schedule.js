@@ -28,28 +28,52 @@ module.exports = {
   shiftRight: async (index) => {
     let schedules = await Schedule.find();
 
+    let courses = null;
+    let subjects = null;
+    let terms = null;
+
     for (schedule of schedules) {
-      _.each(_.values(schedule), (subject) => {
-        _.each(_.values(subject), (term) => {
-          if (term.col >= index) {
-            term.col += 1;
-          }
-        });
+      courses = _.values(schedule.terms);
+      subjects = _.map(courses, _.values);
+      terms = _.flattenDeep(subjects);
+
+      _.each(terms, (term) => {
+        if (term.assigned && term.col >= index) {
+          term.col += 1;
+        }
       });
+
+      await Schedule.update({'id': schedule.id}, schedule);
     }
   },
 
   shiftLeft: async (index) => {
     let schedules = await Schedule.find();
 
+    let courses = null;
+    let subjects = null;
+    let terms = null;
+
     for (schedule of schedules) {
-      _.each(_.values(schedule), (subject) => {
-        _.each(_.values(subject), (term) => {
-          if (term.col >= index) {
-            term.col -= 1;
-          }
-        });
+      courses = _.values(schedule.terms);
+      subjects = _.map(courses, _.values);
+      terms = _.flattenDeep(subjects);
+
+      console.log('terms before', _.cloneDeep(terms));
+
+      _.each(terms, (term) => {
+        if (term.assigned && term.col === index) {
+          term.assigned = false;
+          term.row = null;
+          term.col = null;
+        } else if (term.assigned && term.col > index) {
+          term.col -= 1;
+        }
       });
+
+      console.log('terms after', terms);
+
+      await Schedule.update({'id': schedule.id}, schedule);
     }
   },
 
@@ -67,10 +91,11 @@ module.exports = {
 
       _.times(subject.lessons, (i) => {
         schedule.terms[course.label][subject.label].push({
-          course,
-          subject,
-          cellspan,
+          assigned: false,
+          row: null,
+          col: null,
           number: i,
+          cellspan,
         });
       });
 

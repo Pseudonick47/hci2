@@ -9,10 +9,10 @@
     ]"
   >
     <v-dialog v-model="dialog" max-width="500px">
-      <v-card>
-        <classroom-form :editOrCreate="'edit'" :classroom="editingItem" v-if="tab==0" @clicked="closeChildDialog" @change="warning"></classroom-form>
-        <subject-form :editOrCreate="'edit'" :subject="editingItem" v-if="tab==1" @clicked="closeChildDialog" @change="warning"></subject-form>
-        <course-form :editOrCreate="'edit'" :course="editingItem" v-if="tab==2" @clicked="closeChildDialog" @change="warning"></course-form>
+      <v-card class="pa-3">
+        <classroom-form :editOrCreate="'edit'" :classroom="editingItem" v-if="tab==1" @clicked="closeChildDialog" @change="warning"></classroom-form>
+        <subject-form :editOrCreate="'edit'" :subject="editingItem" v-if="tab==2" @clicked="closeChildDialog" @change="warning"></subject-form>
+        <course-form :editOrCreate="'edit'" :course="editingItem" v-if="tab==0" @clicked="closeChildDialog" @change="warning"></course-form>
         <software-form :editOrCreate="'edit'" :software="editingItem" v-if="tab==3" @clicked="closeChildDialog" @change="warning"></software-form>
         <v-card-actions>
             <v-spacer></v-spacer>

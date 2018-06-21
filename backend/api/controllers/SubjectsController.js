@@ -18,6 +18,7 @@ module.exports = {
       await Schedule.createTerms(course, subject);
     }
 
+    subject = await Subjects.findOne({ id: req.param('id')}).populate('course');
     return res.json(subject);
   },
 

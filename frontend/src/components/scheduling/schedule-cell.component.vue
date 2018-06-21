@@ -32,8 +32,8 @@
             justify-center
             pb-2
           >
-            <div class="title schedule__term__card__text">
-              {{ model.term.number }}
+            <div class="body-2 schedule__term__card__text">
+              {{ model.term.number + 1 }}
             </div>
           </v-flex>
         </v-layout>
@@ -43,7 +43,7 @@
             align-center
             justify-center
           >
-            <div class="title schedule__term__card__text">
+            <div class="body-2 schedule__term__card__text">
               {{ model.term.subject.label }}
             </div>
           </v-flex>
@@ -55,7 +55,7 @@
             justify-center
             pt-2
           >
-            <div class="title schedule__term__card__text">
+            <div class="body-2 schedule__term__card__text">
               {{ model.term.course.label }}
             </div>
           </v-flex>
