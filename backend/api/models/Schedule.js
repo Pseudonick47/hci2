@@ -59,8 +59,6 @@ module.exports = {
       subjects = _.map(courses, _.values);
       terms = _.flattenDeep(subjects);
 
-      console.log('terms before', _.cloneDeep(terms));
-
       _.each(terms, (term) => {
         if (term.assigned && term.col === index) {
           term.assigned = false;
@@ -70,8 +68,6 @@ module.exports = {
           term.col -= 1;
         }
       });
-
-      console.log('terms after', terms);
 
       await Schedule.update({'id': schedule.id}, schedule);
     }
